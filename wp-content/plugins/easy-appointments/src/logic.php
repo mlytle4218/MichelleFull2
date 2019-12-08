@@ -106,7 +106,12 @@ class EALogic
                 // 08:00 at first
                 $temp_time = strtotime($working_day->time_from);
 
-                $run_time = $serviceObj->duration * 60 * $counter++;
+                // use smaller step
+                if (!empty($serviceObj->slot_step)) {
+                    $run_time = $serviceObj->slot_step * 60 * $counter++;
+                } else {
+                    $run_time = $serviceObj->duration * 60 * $counter++;
+                }
 
                 // 08:00 at first pass, second 09:00
                 $temp_time += $run_time;
@@ -138,11 +143,17 @@ class EALogic
             }
         }
 
+        $service_duration = $serviceObj->duration;
+
+        if (!empty($serviceObj->slot_step)) {
+            $service_duration = $serviceObj->slot_step;
+        }
+
         // remove non-working time
-        $this->remove_closed_slots($working_hours, $location, $service, $worker, $day, $serviceObj->duration);
+        $this->remove_closed_slots($working_hours, $location, $service, $worker, $day, $service_duration);
 
         // remove already reserved times
-        $this->remove_reserved_slots($working_hours, $location, $service, $worker, $day, $serviceObj->duration, $app_id);
+        $this->remove_reserved_slots($working_hours, $location, $service, $worker, $day, $service_duration, $app_id);
 
         // format time
         return $this->format_time($working_hours);
@@ -150,6 +161,7 @@ class EALogic
 
     /**
      * Remove times when is not working
+     *
      * @param  array &$slots Free slots
      * @param  int $location Location
      * @param  int $service Service
@@ -187,6 +199,7 @@ class EALogic
             // check slots
             foreach ($slots as $temp_time => $value) {
                 $current_time = strtotime($temp_time);
+//                $current_time_end = strtotime("$temp_time + $service_duration minute");
                 $current_time_end = strtotime("$temp_time + $service_duration minute");
 
                 if ($lower_time < $current_time && $upper_time <= $current_time) {
@@ -251,7 +264,8 @@ class EALogic
     }
 
     /**
-     * Remove times that are reserved
+     * Remove times that are reserved (already booked)
+     *
      * @param  array &$slots Free slots
      * @param  int $location Location
      * @param  int $service Service
@@ -273,18 +287,22 @@ class EALogic
         $query = $this->wpdb->prepare("SELECT * FROM {$this->wpdb->prefix}ea_appointments WHERE 
 			((location=%d AND service=%d) OR '{$multiple}' = '0') AND 
 			worker=%d AND 
-			date = %s AND
+			date <= %s AND
+			end_date >= %s AND
 			id <> %d AND 
 			status NOT IN ('abandoned','canceled')",
-            $location, $service, $worker, $day, $app_id
+            $location, $service, $worker, $day, $day, $app_id
         );
 
         $appointments = $this->wpdb->get_results($query);
 
         // check all no working times
         foreach ($appointments as $app) {
-            $lower_time = strtotime($app->start);
-            $upper_time = strtotime($app->end);
+            $start = ($app->date == $day) ? $app->start : '00:00';
+            $end = ($app->end_date == $day) ? $app->end : '23:59';
+
+            $lower_time = strtotime($start);
+            $upper_time = strtotime($end);
 
             if ($app->end === '00:00:00' || $upper_time < $lower_time) {
                 $upper_time = strtotime('23:59:59');

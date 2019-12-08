@@ -237,6 +237,7 @@ class EAAdminPanel
         wp_enqueue_style('jquery-chosen');
 
         // style editor
+
     }
 
     /**
@@ -329,6 +330,13 @@ class EAAdminPanel
      */
     public function top_level_appointments()
     {
+
+        // check if APS tags are on
+        if ($this->is_asp_tags_are_on()) {
+            require_once EA_SRC_DIR . 'templates/asp_tag_message.tpl.php';
+            return;
+        }
+
         $settings = $this->options->get_options();
 
         $settings['date_format'] = $this->datetime->convert_to_moment_format(get_option('date_format', 'F j, Y'));
@@ -355,6 +363,12 @@ class EAAdminPanel
      */
     public function reports_page()
     {
+        // check if APS tags are on
+        if ($this->is_asp_tags_are_on()) {
+            require_once EA_SRC_DIR . 'templates/asp_tag_message.tpl.php';
+            return;
+        }
+
         $settings = $this->options->get_options();
         wp_localize_script('ea-report', 'ea_settings', $settings);
 
@@ -362,7 +376,7 @@ class EAAdminPanel
         $screen->add_help_tab(array(
             'id'    => 'easyapp_settings_help'
         , 'title'   => 'Time table'
-        , 'content' => '<p>Time table report shows free slost for every locaition - service - worker connection on whole month</p>' .
+        , 'content' => '<p>Time table report shows free slots for every location - service - worker connection on whole month</p>' .
                 '<p>There can you see free times an how many slots are taken.</p>'
         ));
 
@@ -377,6 +391,12 @@ class EAAdminPanel
      */
     public function top_settings_menu()
     {
+        // check if APS tags are on
+        if ($this->is_asp_tags_are_on()) {
+            require_once EA_SRC_DIR . 'templates/asp_tag_message.tpl.php';
+            return;
+        }
+
         $settings = $this->options->get_options();
         wp_localize_script('ea-settings', 'ea_settings', $settings);
 
@@ -391,5 +411,21 @@ class EAAdminPanel
 
         require_once EA_SRC_DIR . 'templates/admin.tpl.php';
         require_once EA_SRC_DIR . 'templates/inlinedata.tpl.php';
+    }
+
+    /**
+     * We need to check if asp tags are turned on
+     */
+    public function is_asp_tags_are_on()
+    {
+        $aps_tags = ini_get('asp_tags');
+
+        if (!empty($aps_tags)) {
+            if (ini_set('asp_tags', '0') === false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

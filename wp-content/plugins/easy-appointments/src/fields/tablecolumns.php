@@ -24,6 +24,7 @@ class EATableColumns
                 'date',
                 'start',
                 'end',
+                'end_date',
                 'description',
                 'status',
                 'user',
@@ -68,6 +69,7 @@ class EATableColumns
                 'id',
                 'name',
                 'duration',
+                'slot_step',
                 'price'
             ),
             'ea_options' => array(

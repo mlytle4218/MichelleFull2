@@ -37,6 +37,7 @@
         defaults : {
             name:"",
             duration: 60,
+            slot_step: 60,
             price: 10
         },
         url : function() {
@@ -75,7 +76,7 @@
             day_of_week : [],
             time_from : null,
             time_to : null,
-            day_from : '2017-01-01',
+            day_from : '2018-01-01',
             day_to : '2020-01-01',
             is_working : 0
         },
@@ -209,7 +210,7 @@
     	template : _.template( jQuery("#ea-report-main").html() ),
 
     	events : {
-    		"click .report"  : "reportSelected"
+            "click .report"  : "reportSelected"
     	},
 
     	initialize: function () {
@@ -415,6 +416,8 @@
 
     	events : {
     		//  'click .eadownloadcsv': 'download',
+            "click #ea-export-customize-columns-toggle" : "toggleColumnSettings",
+            "click #ea-export-save-custom-columns" : "saveCustomColumns"
     	},
 
     	initialize: function () {
@@ -443,7 +446,29 @@
     		fields.push({ 'name' : 'action', 'value': 'ea_export' });
 
     		jQuery.get(ajaxurl, fields, function(result) {});
-    	}
+    	},
+
+        /**
+         * Toggle settings
+         */
+        toggleColumnSettings: function() {
+            jQuery('#ea-export-customize-columns').toggle();
+        },
+
+        /**
+         *
+         */
+        saveCustomColumns: function() {
+
+            var data = {
+                fields: this.$el.find('#ea-export-custom-columns').val(),
+                action: 'ea_save_custom_columns'
+            };
+
+            jQuery.post(ajaxurl, data, function(result) {
+                alert('Settings saved');
+            });
+        }
 
     });
     var mainView = new EA.ReportView();

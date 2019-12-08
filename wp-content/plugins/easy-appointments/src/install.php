@@ -42,7 +42,7 @@ class EAInstallTools
     function __construct($wpdb, $models, $options)
     {
 //        $this->easy_app_db_version = '1.9.11';
-        $this->easy_app_db_version = '1.10.4';
+        $this->easy_app_db_version = '2.2.0';
 
         $this->wpdb = $wpdb;
         $this->models = $models;
@@ -76,6 +76,7 @@ CREATE TABLE {$table_prefix}ea_appointments (
   date date DEFAULT NULL,
   start time DEFAULT NULL,
   end time DEFAULT NULL,
+  end_date date DEFAULT NULL,
   description text,
   status varchar(45) DEFAULT NULL,
   user int(11) DEFAULT NULL,
@@ -147,6 +148,7 @@ CREATE TABLE {$table_prefix}ea_services (
   id int(11) NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   duration int(11) NOT NULL,
+  slot_step int(11) DEFAULT NULL,
   price decimal(10,2) DEFAULT NULL,
   PRIMARY KEY  (id)
 ) $charset_collate ;
@@ -702,6 +704,38 @@ EOT;
             }
 
             $version = '1.10.4';
+        }
+
+        if (version_compare($version, '2.0.0', '<')) {
+            $table_queries = array();
+
+            $table_appointments = $this->wpdb->prefix . 'ea_appointments';
+
+            $table_queries[] = "ALTER TABLE `{$table_appointments}` ADD COLUMN `end_date` DATE NULL DEFAULT NULL AFTER `end`;";
+            $table_queries[] = "UPDATE `{$table_appointments}` SET end_date=`date`;";
+
+            // add relations
+            foreach ($table_queries as $query) {
+                $this->wpdb->query($query);
+            }
+
+            $version = '2.0.0';
+        }
+
+        if (version_compare($version, '2.2.0', '<')) {
+            $table_queries = array();
+
+            $table_services = $this->wpdb->prefix . 'ea_services';
+
+            $table_queries[] = "ALTER TABLE `{$table_services}` ADD COLUMN `slot_step` int(11) DEFAULT NULL AFTER `duration`;";
+            $table_queries[] = "UPDATE `{$table_services}` SET slot_step=duration;";
+
+            // add relations
+            foreach ($table_queries as $query) {
+                $this->wpdb->query($query);
+            }
+
+            $version = '2.2.0';
         }
 
         update_option('easy_app_db_version', $version);

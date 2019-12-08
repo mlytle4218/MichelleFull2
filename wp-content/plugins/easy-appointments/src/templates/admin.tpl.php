@@ -42,36 +42,49 @@
 			</li>
 		</ul>
 		<div id="tab-content">
-			
 		</div>
 	</div>
 </script>
 
 <script type="text/template" id="ea-tpl-locations-table">
 <div>
-	<h2>
-		<a href="#" class="add-new-h2 add-new">
-			<i class="fa fa-plus"></i>
-			<?php _e('Add New Location', 'easy-appointments'); ?>
-		</a>
-		<a href="#" class="add-new-h2 refresh-list">
-			<i class="fa fa-refresh"></i>
-			<?php _e('Refresh', 'easy-appointments'); ?>
-		</a>
-		<span id="status-msg" class="status"></span>
-	</h2>
-	<table class="wp-list-table widefat fixed">
-		<thead>
-			<tr>
-				<th class="manage-column column-title column-5">Id</th>
-				<th class="manage-column column-title"><?php _e('Name', 'easy-appointments'); ?></th>
-				<th class="manage-column column-title"><?php _e('Address', 'easy-appointments'); ?></th>
-				<th class="manage-column column-title"><?php _e('Location', 'easy-appointments'); ?></th>
-				<th class="manage-column column-title column-15"><?php _e('Actions', 'easy-appointments'); ?></th>
-			</tr>
-		</thead>
-		<tbody id="ea-locations"></tbody>
-	</table>
+    <div>
+        <a href="#" class="add-new-h2 add-new">
+            <i class="fa fa-plus"></i>
+            <?php _e('Add New Location', 'easy-appointments'); ?>
+        </a>
+        <a href="#" class="add-new-h2 refresh-list">
+            <i class="fa fa-refresh"></i>
+            <?php _e('Refresh', 'easy-appointments'); ?>
+        </a>
+        <div class="ea-sort-fields">
+            <label><?php _e('Sort Locations By');?>:</label>
+            <select id="sort-locations-by" name="sort-locations-by">
+                <option value="id">Id</option>
+                <option value="name">Name</option>
+                <option value="address">Address</option>
+                <option value="location">Location</option>
+            </select>
+            <label><?php _e('Order by');?>:</label>
+            <select id="order-locations-by" name="order-locations-by">
+                <option value="ASC">asc</option>
+                <option value="DESC">desc</option>
+            </select>
+        </div>
+        <span id="status-msg" class="status"></span>
+    </div>
+    <table class="wp-list-table widefat fixed">
+        <thead>
+        <tr>
+            <th class="manage-column column-title column-5">Id</th>
+            <th class="manage-column column-title"><?php _e('Name', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Address', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Location', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title column-15"><?php _e('Actions', 'easy-appointments'); ?></th>
+        </tr>
+        </thead>
+        <tbody id="ea-locations"></tbody>
+    </table>
 </div>
 </script>
 
@@ -93,67 +106,86 @@
 </script>
 
 <script type="text/template" id="ea-tpl-locations-row-edit">
-	<td><%= row.id %></td>
-	<td><input type="text" data-prop="name" value="<%= _.escape( row.name ) %>"></td>
-	<td><input type="text" data-prop="address" value="<%= _.escape( row.address ) %>"></td>
-	<td><input type="text" data-prop="location" value="<%= _.escape( row.location ) %>"></td>
-	<td>
-		<button class="button button-primary btn-save"><?php _e('Save','easy-appointments');?></button>
-		<button class="button btn-cancel"><?php _e('Cancel','easy-appointments');?></button>
-	</td>
+    <td><%= row.id %></td>
+    <td><input type="text" data-prop="name" value="<%= _.escape( row.name ) %>"></td>
+    <td><input type="text" data-prop="address" value="<%= _.escape( row.address ) %>"></td>
+    <td><input type="text" data-prop="location" value="<%= _.escape( row.location ) %>"></td>
+    <td>
+        <button class="button button-primary btn-save"><?php _e('Save', 'easy-appointments'); ?></button>
+        <button class="button btn-cancel"><?php _e('Cancel', 'easy-appointments'); ?></button>
+    </td>
 </script>
 
 <script type="text/template" id="ea-tpl-services-table">
 <div>
-	<h2>
-		<a href="#" class="add-new-h2 add-new">
-			<i class="fa fa-plus"></i>
-			<?php _e('Add New Service','easy-appointments');?>
-		</a>
-		<a href="#" class="add-new-h2 refresh-list">
-			<i class="fa fa-refresh"></i>
-			<?php _e('Refresh','easy-appointments');?>
-		</a>
-		<span id="status-msg" class="status"></span>
-	</h2>
-	<table class="wp-list-table widefat fixed">
-		<thead>
-			<tr>
-				<th class="manage-column column-title column-5">Id</th>
-				<th class="manage-column column-title"><?php _e('Name','easy-appointments');?></th>
-				<th class="manage-column column-title"><?php _e('Duration (min)','easy-appointments');?></th>
-				<th class="manage-column column-title"><?php _e('Price','easy-appointments');?></th>
-				<th class="manage-column column-title column-15"><?php _e('Actions','easy-appointments');?></th>
-			</tr>
-		</thead>
-		<tbody id="ea-services">
-			
-		</tbody>
-	</table>
+    <div>
+        <a href="#" class="add-new-h2 add-new">
+            <i class="fa fa-plus"></i>
+            <?php _e('Add New Service', 'easy-appointments'); ?>
+        </a>
+        <a href="#" class="add-new-h2 refresh-list">
+            <i class="fa fa-refresh"></i>
+            <?php _e('Refresh', 'easy-appointments'); ?>
+        </a>
+        <div class="ea-sort-fields">
+            <label><?php _e('Sort Services By'); ?>:</label>
+            <select id="sort-services-by" name="sort-services-by">
+                <option value="id">Id</option>
+                <option value="name">Name</option>
+                <option value="duration">Description</option>
+                <option value="price">Price</option>
+            </select>
+            <label><?php _e('Order by'); ?>:</label>
+            <select id="order-services-by" name="order-services-by">
+                <option value="ASC">asc</option>
+                <option value="DESC">desc</option>
+            </select>
+        </div>
+        <span id="status-msg" class="status"></span>
+    </div>
+    <table class="wp-list-table widefat fixed">
+        <thead>
+        <tr>
+            <th class="manage-column column-title column-5">Id</th>
+            <th class="manage-column column-title"><?php _e('Name', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Duration (in minutes)', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Slot step (in minutes)', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Price', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title column-15"><?php _e('Actions', 'easy-appointments'); ?></th>
+        </tr>
+        </thead>
+        <tbody id="ea-services">
+
+        </tbody>
+    </table>
 </div>
 </script>
 
 <script type="text/template" id="ea-tpl-services-row">
-	<td><%= row.id %></td>
-	<td class="post-title page-title column-title">
-		<strong><%= _.escape( row.name ) %></strong>
-	</td>
-	<td>
-		<strong><%= _.escape( row.duration ) %></strong>
-	</td>
-	<td>
-		<strong><%= _.escape( row.price ) %></strong>
-	</td>
-	<td>
-		<button class="button btn-edit"><?php _e('Edit','easy-appointments');?></button>
-		<button class="button btn-del"><?php _e('Delete','easy-appointments');?></button>
-	</td>
+    <td><%= row.id %></td>
+    <td class="post-title page-title column-title">
+        <strong><%= _.escape( row.name ) %></strong>
+    </td>
+    <td>
+        <strong><%= _.escape( row.duration ) %></strong>
+    </td>
+    <td>
+        <strong><%= _.escape( row.slot_step ) %></strong>
+    </td>
+    <td>
+        <strong><%= _.escape( row.price ) %></strong>
+    </td>
+    <td>
+        <button class="button btn-edit"><?php _e('Edit','easy-appointments');?></button>
+        <button class="button btn-del"><?php _e('Delete','easy-appointments');?></button>
+    </td>
 </script>
 
 <script type="text/template" id="ea-tpl-services-row-edit">
 	<td><%= row.id %></td>
 	<td><input type="text" data-prop="name" value="<%= _.escape( row.name ) %>"></td>
 	<td><input type="text" data-prop="duration" value="<%= _.escape( row.duration ) %>"></td>
+	<td><input type="text" data-prop="slot_step" value="<%= _.escape( row.slot_step ) %>"></td>
 	<td><input type="text" data-prop="price" value="<%= _.escape( row.price ) %>"></td>
 	<td>
 		<button class="button button-primary btn-save"><?php _e('Save','easy-appointments');?></button>
@@ -164,32 +196,47 @@
 <!-- Staff -->
 <script type="text/template" id="ea-tpl-staff-table">
 <div>
-	<h2>
-		<a href="#" class="add-new-h2 add-new">
-			<i class="fa fa-plus"></i>
-			<?php _e('Add New Worker','easy-appointments');?>
-		</a>
-		<a href="#" class="add-new-h2 refresh-list">
-			<i class="fa fa-refresh"></i>
-			<?php _e('Refresh','easy-appointments');?>
-		</a>
-		<span id="status-msg" class="status"></span>
-	</h2>
-	<table class="wp-list-table widefat fixed">
-		<thead>
-			<tr>
-				<th class="manage-column column-title column-5">Id</th>
-				<th class="manage-column column-title"><?php _e('Name','easy-appointments');?></th>
-				<th class="manage-column column-title"><?php _e('Description','easy-appointments');?></th>
-				<th class="manage-column column-title"><?php _e('Email','easy-appointments');?></th>
-				<th class="manage-column column-title"><?php _e('Phone','easy-appointments');?></th>
-				<th class="manage-column column-title column-15"><?php _e('Actions','easy-appointments');?></th>
-			</tr>
-		</thead>
-		<tbody id="ea-staff">
-			
-		</tbody>
-	</table>
+    <div>
+        <a href="#" class="add-new-h2 add-new">
+            <i class="fa fa-plus"></i>
+            <?php _e('Add New Worker', 'easy-appointments'); ?>
+        </a>
+        <a href="#" class="add-new-h2 refresh-list">
+            <i class="fa fa-refresh"></i>
+            <?php _e('Refresh', 'easy-appointments'); ?>
+        </a>
+        <div class="ea-sort-fields">
+            <label><?php _e('Sort Workers By');?>:</label>
+            <select id="sort-workers-by" name="sort-workers-by">
+                <option value="id">Id</option>
+                <option value="name">Name</option>
+                <option value="description">Description</option>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
+            </select>
+            <label><?php _e('Order by');?>:</label>
+            <select id="order-workers-by" name="order-workers-by">
+                <option value="ASC">asc</option>
+                <option value="DESC">desc</option>
+            </select>
+        </div>
+        <span id="status-msg" class="status"></span>
+    </div>
+    <table class="wp-list-table widefat fixed">
+        <thead>
+        <tr>
+            <th class="manage-column column-title column-5">Id</th>
+            <th class="manage-column column-title"><?php _e('Name', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Description', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Email', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title"><?php _e('Phone', 'easy-appointments'); ?></th>
+            <th class="manage-column column-title column-15"><?php _e('Actions', 'easy-appointments'); ?></th>
+        </tr>
+        </thead>
+        <tbody id="ea-staff">
+
+        </tbody>
+    </table>
 </div>
 </script>
 
@@ -275,17 +322,17 @@
 		<br>
 		<p> 
 			<strong>
-				<%= (row.location == 0) ? '-' : _.escape( _.findWhere(locations, {id:row.location}).name ) %>
+				<%= (row.location == 0) ? '-' : _.escape( _.findWhereSafe(locations, row.location, 'name' )) %>
 			</strong>
 		</p>
 		<p>
 			<strong>
-				<%= (row.service == 0) ? '-' : _.escape( _.findWhere(services, {id:row.service}).name ) %>
+				<%= (row.service == 0) ? '-' : _.escape( _.findWhereSafe(services, row.service, 'name' )) %>
 			</strong>
 		</p>
 		<p>
 			<strong>
-				<%= (row.worker == 0) ? '-' : _.escape( _.findWhere(workers, {id:row.worker}).name ) %>
+				<%= (row.worker == 0) ? '-' : _.escape( _.findWhereSafe(workers, row.worker, 'name' )) %>
 			</strong>
 		</p>
 	</td>
@@ -523,6 +570,8 @@
 	</li>
 </script>
 
+
+<!--Customize -->
 <script type="text/template" id="ea-tpl-custumize">
 	<div class="wp-filter">
 		<h2><?php _e('Connections', 'easy-appointments'); ?> :</h2>
@@ -565,6 +614,9 @@
 					<span class="description"> <?php _e('Number of appointments that one visitor can make reservation before limit alert is shown. Appointments are counted during one day.', 'easy-appointments'); ?></span>
 				</td>
 			</tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
 			<tr>
 				<th class="row">
 					<label><?php _e('Auto reservation', 'easy-appointments'); ?> :</label>
@@ -577,6 +629,24 @@
 					<span class="description"> <?php _e('Make reservation at moment user select date and time!', 'easy-appointments'); ?></span>
 				</td>
 			</tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <th class="row">
+                    <label for=""><?php _e('Turn nonce off', 'easy-appointments'); ?> :</label>
+                </th>
+                <td>
+                    <input class="field" data-key="nonce.off" name="nonce.off" type="checkbox" <% if
+                    (_.findWhere(settings, {ea_key:'nonce.off'}).ea_value == "1") { %>checked<% } %>>
+                </td>
+                <td>
+                    <span class="description"> <?php _e('if you have issues with validation code that is expired in form you can turn off nonce but you are doing that on your own risk.', 'easy-appointments'); ?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
 			<tr>
 				<th class="row">
 					<label><?php _e('Default status', 'easy-appointments'); ?> :</label>
@@ -903,7 +973,7 @@
 				<td>
 					<select data-key="cancel.scroll" class="field" name="cancel.scroll">
 						<% var langs = [
-						'calendar','worker', 'service', 'location'
+						'calendar', 'worker', 'service', 'location'
 						];
 						_.each(langs,function(item,key,list){
 						if(typeof _.findWhere(settings, {ea_key:'cancel.scroll'}) !== 'undefined' &&
@@ -930,6 +1000,62 @@
 			</tr>
 			</tbody>
 		</table>
+        <hr class="divider">
+        <h2>GDPR</h2>
+        <table class="form-table form-table-translation">
+            <tbody>
+                <tr>
+                    <th class="row">
+                        <label for=""><?php _e('Turn on checkbox', 'easy-appointments'); ?> :</label>
+                    </th>
+                    <td>
+                        <input class="field" type="checkbox" name="gdpr.on" data-key="gdpr.on"<% if (typeof
+                        _.findWhere(settings, {ea_key:'gdpr.on'}) !== 'undefined' && _.findWhere(settings,
+                        {ea_key:'gdpr.on'}).ea_value == '1') { %>checked<% } %> />
+                    </td>
+                    <td>
+                        <span class="description"> <?php _e('GDPR section checkbox.', 'easy-appointments'); ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row">
+                        <label for=""><?php _e('Label', 'easy-appointments'); ?> :</label>
+                    </th>
+                    <td>
+                        <input style="width: 300px" class="field" data-key="gdpr.label" name="gdpr.label" type="text"
+                               value="<%= _.findWhere(settings, {ea_key:'gdpr.label'}).ea_value %>">
+                    </td>
+                    <td>
+                        <span class="description"> <?php _e('Label next to checkbox.', 'easy-appointments'); ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row">
+                        <label for=""><?php _e('Page with GDPR content', 'easy-appointments'); ?> :</label>
+                    </th>
+                    <td>
+                        <input style="width: 300px" class="field" data-key="gdpr.link" name="gdpr.link" type="text"
+                               value="<%= _.findWhere(settings, {ea_key:'gdpr.link'}).ea_value %>">
+                    </td>
+                    <td>
+                        <span class="description"> <?php _e('Link to page with GDPR content.', 'easy-appointments'); ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row">
+                        <label for=""><?php _e('Error message', 'easy-appointments'); ?> :</label>
+                    </th>
+                    <td>
+                        <input style="width: 300px" class="field" data-key="gdpr.message" name="gdpr.message" type="text"
+                               value="<%= _.findWhere(settings, {ea_key:'gdpr.message'}).ea_value %>">
+                    </td>
+                    <td>
+                        <span class="description"> <?php _e('Message if user don\'t mark the GDPR checkbox.', 'easy-appointments'); ?></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="divider">
 		<h2>Money</h2>
 		<table class="form-table form-table-translation">
 			<tbody>
@@ -969,10 +1095,10 @@
 </script>
 
 <script type="text/template" id="ea-tpl-custom-forms">
-	<li data-name="<%= item.label %>" style="display: list-item;">
+	<li data-name="<%= _.escape(item.label) %>" style="display: list-item;">
 		<div class="menu-item-bar">
 			<div class="menu-item-handle">
-				<span class="item-title"><span class="menu-item-title"><%= item.label %></span> <span class="is-submenu" style="display: none;">sub item</span></span>
+				<span class="item-title"><span class="menu-item-title"><%= _.escape(item.label) %></span> <span class="is-submenu" style="display: none;">sub item</span></span>
 				<span class="item-controls">
 					<span class="item-type"><%= item.type %></span>
 						<a class="single-field-options"><i class="fa fa-chevron-down"></i></a>
@@ -984,9 +1110,12 @@
 
 <script type="text/template" id="ea-tpl-custom-form-options">
 <div class="field-settings">
-	<p>
-		<label>Label :</label><input type="text" class="field-label" name="field-label" value="<%= item.label %>">
-	</p>
+    <p>
+        <label>Label :</label><input type="text" class="field-label" name="field-label" value="<%= _.escape(item.label) %>">
+    </p>
+    <p>
+        <label>Placeholder :</label><input type="text" class="field-mixed" name="field-mixed" value="<%= _.escape(item.mixed) %>">
+    </p>
 	<% if (item.type === "SELECT") { %>
 		<p>
 			<label>Options :</label>
@@ -1043,7 +1172,7 @@
 	</div>
 </script>
 
-<!-- TOOLS LOG-->
+<!-- TOOLS LOG -->
 <script type="text/template" id="ea-tpl-tools-log">------------ ERROR #<%= item.id %> ------------
 TYPE: <%= item.error_type %>
 ERRORS: <%= item.errors %>

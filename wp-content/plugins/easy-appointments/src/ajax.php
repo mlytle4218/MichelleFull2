@@ -7,6 +7,9 @@ if (!defined('WPINC')) {
 
 /**
  * Ajax communication
+ *
+ * TODO switch to rest API - one by one endpoint
+ *
  */
 class EAAjax
 {
@@ -93,6 +96,9 @@ class EAAjax
 
         // admin ajax section
         if (is_admin()) {
+
+            add_action('wp_ajax_ea_save_custom_columns', array($this, 'save_custom_columns'));
+
             add_action('wp_ajax_ea_errors', array($this, 'ajax_errors'));
 
             add_action('wp_ajax_ea_test_wp_mail', array($this, 'ajax_test_mail'));
@@ -148,8 +154,7 @@ class EAAjax
 
     public function ajax_front_end()
     {
-        check_ajax_referer('ea-bootstrap-form', 'check');
-        unset($_GET['check']);
+        $this->validate_nonce();
 
         $data = $_GET;
 
@@ -161,17 +166,24 @@ class EAAjax
             }
         }
 
-        $result = $this->models->get_next($data);
+        $mapping = array(
+            'location' => 'ea_locations',
+            'service'  => 'ea_services',
+            'worker'   => 'ea_workers'
+        );
+
+        $orderPart = $this->models->get_order_by_part($mapping[$data['next']], true);
+
+        $result = $this->models->get_next($data, $orderPart);
 
         $this->send_ok_json_result($result);
     }
 
     public function ajax_date_selected()
     {
-        check_ajax_referer('ea-bootstrap-form', 'check');
+        $this->validate_nonce();
 
         unset($_GET['action']);
-        unset($_GET['check']);
 
         $block_time = (int)$this->options->get_option_value('block.time', 0);
 
@@ -182,8 +194,7 @@ class EAAjax
 
     public function ajax_res_appointment()
     {
-        check_ajax_referer('ea-bootstrap-form', 'check');
-        unset($_GET['check']);
+        $this->validate_nonce();
 
         $table = 'ea_appointments';
 
@@ -203,6 +214,7 @@ class EAAjax
             'date',
             'start',
             'end',
+            'end_date',
             'description',
             'status',
             'user',
@@ -279,8 +291,7 @@ class EAAjax
      */
     public function ajax_final_appointment()
     {
-        check_ajax_referer('ea-bootstrap-form', 'check');
-        unset($_GET['check']);
+        $this->validate_nonce();
 
         $table = 'ea_appointments';
 
@@ -351,8 +362,7 @@ class EAAjax
 
     public function ajax_cancel_appointment()
     {
-        check_ajax_referer('ea-bootstrap-form', 'check');
-        unset($_GET['check']);
+        $this->validate_nonce();
 
         $table = 'ea_appointments';
 
@@ -385,10 +395,33 @@ class EAAjax
 
     public function ajax_setting()
     {
-
         $this->validate_access_rights();
+        $data = $this->parse_input_data();
 
-        $this->parse_single_model('ea_options');
+        $dont_remove = array(
+            'id',
+            'ea_key',
+            'ea_value',
+            'type'
+        );
+
+        foreach ($data as $key => $rem) {
+            if (!in_array($key, $dont_remove)) {
+                unset($data[$key]);
+            }
+        }
+
+        $options = array_keys($this->options->get_options());
+
+        if (!in_array($data['ea_key'], $options)) {
+            $this->send_err_json_result('Invalid value');
+        }
+
+        $data['ea_value'] = sanitize_text_field($data['ea_value']);
+
+        $result = $this->models->update_option($data);
+
+        $this->send_ok_json_result($result);
     }
 
     public function ajax_settings()
@@ -517,8 +550,10 @@ class EAAjax
 
         $response = array();
 
+        $orderPart = $this->models->get_order_by_part('ea_services');
+
         if ($this->type === 'GET') {
-            $response = $this->models->get_all_rows('ea_services');
+            $response = $this->models->get_all_rows('ea_services', array(), $orderPart);
         }
 
         die(json_encode($response));
@@ -535,8 +570,10 @@ class EAAjax
 
         $response = array();
 
+        $orderPart = $this->models->get_order_by_part('ea_locations');
+
         if ($this->type === 'GET') {
-            $response = $this->models->get_all_rows('ea_locations');
+            $response = $this->models->get_all_rows('ea_locations', array(), $orderPart);
         }
 
         header("Content-Type: application/json");
@@ -565,8 +602,10 @@ class EAAjax
 
         $response = array();
 
+        $orderPart = $this->models->get_order_by_part('ea_workers');
+
         if ($this->type === 'GET') {
-            $response = $this->models->get_all_rows('ea_staff');
+            $response = $this->models->get_all_rows('ea_staff', array(), $orderPart);
         }
 
         header("Content-Type: application/json");
@@ -619,8 +658,7 @@ class EAAjax
      */
     public function ajax_month_status()
     {
-        check_ajax_referer('ea-bootstrap-form', 'check');
-        unset($_GET['check']);
+        $this->validate_nonce();
 
         $data = $this->parse_input_data();
 
@@ -642,6 +680,23 @@ class EAAjax
         if ($this->type == 'NEW' || $this->type == 'UPDATE') {
 
             $data['slug'] = sanitize_title($data['label']);
+
+            // case if there are some utf8 chars in slug
+            if (strpos($data['slug'], '%') > -1) {
+                $data['slug'] = trim(iconv('UTF8', 'ASCII//IGNORE//TRANSLIT', $data['label']));
+
+                if ($data['slug'] == '' || strlen($data['slug']) < 5) {
+
+                    $max = $this->models->get_next_meta_field_id();
+
+                    if (!empty($data['id'])) {
+                        $max = $data['id'];
+                    }
+
+                    $data['slug'] = 'custom_field_' . $max;
+                }
+            }
+
             $response = $this->models->replace($table, $data, true);
 
             if ($response == false) {
@@ -791,6 +846,9 @@ class EAAjax
         $locationsTmp = $response = $this->models->get_all_rows('ea_locations');
         $servicesTmp = $response = $this->models->get_all_rows('ea_services');
 
+        $app_fields = array('id', 'location', 'service', 'worker', 'date', 'start', 'end', 'end_date', 'status', 'user', 'price', 'ip', 'session');
+        $meta_fields_tmp = $this->models->get_all_rows('ea_meta_fields');
+
         $workers = array();
         $locations = array();
         $services = array();
@@ -807,6 +865,15 @@ class EAAjax
             $services[$s->id] = $s->name;
         }
 
+        foreach ($meta_fields_tmp as $item) {
+            $app_fields[] = $item->slug;
+        }
+
+        $fields_from_option = get_option('ea_excel_columns', '');
+
+        if (!empty($fields_from_option)) {
+            $app_fields = explode(',', $fields_from_option);
+        }
 
         header('Content-Encoding: UTF-8');
         header('Content-type: text/csv; charset=UTF-8');
@@ -824,19 +891,40 @@ class EAAjax
         $out = fopen('php://output', 'w');
 
         if (count($rows) > 0) {
-            $arr = get_object_vars($rows[0]);
-            $keys = array_keys($arr);
-            fputcsv($out, $keys);
+            fputcsv($out, $app_fields);
         }
 
         foreach ($rows as $row) {
             $arr = get_object_vars($row);
+            $app = array();
 
-            $arr['worker'] = $workers[$arr['worker']];
-            $arr['location'] = $locations[$arr['location']];
-            $arr['service'] = $services[$arr['service']];
+            foreach ($app_fields as $field) {
 
-            fputcsv($out, $arr);
+                // if key is not existing
+                if (!array_key_exists($field, $arr)) {
+                    $app[] = '';
+                    continue;
+                }
+
+                if ($field == 'worker') {
+                    $app[] = $workers[$arr['worker']];
+                    continue;
+                }
+
+                if ($field == 'location') {
+                    $app[] = $locations[$arr['location']];
+                    continue;
+                }
+
+                if ($field == 'service') {
+                    $app[] = $workers[$arr['service']];
+                    continue;
+                }
+
+                $app[] = $arr[$field];
+            }
+
+            fputcsv($out, $app);
         }
 
         fclose($out);
@@ -899,7 +987,7 @@ class EAAjax
         $table = 'ea_appointments';
         $fields = 'ea_fields';
 
-        $app_fields = array('id', 'location', 'service', 'worker', 'date', 'start', 'end', 'status', 'user', 'price');
+        $app_fields = array('id', 'location', 'service', 'worker', 'date', 'start', 'end', 'end_date', 'status', 'user', 'price');
         $app_data = array();
 
         foreach ($app_fields as $value) {
@@ -962,7 +1050,7 @@ class EAAjax
             case 'DELETE':
                 $data = $_GET;
                 $response = $this->models->delete($table, $data, true);
-                $this->models->delete($table, array('app_id' => $app_data['id']), true);
+                $this->models->delete($fields, array('app_id' => $app_data['id']), true);
                 break;
         }
 
@@ -996,5 +1084,47 @@ class EAAjax
             header('HTTP/1.1 403 Forbidden');
             die('You don\'t have rights for this action');
         }
+    }
+
+    /**
+     * Sometimes users want to skip nonce validation because of caching that is making it impossible to have valid one
+     */
+    private function validate_nonce()
+    {
+        // we need to unset check value
+        unset($_GET['check']);
+
+        $value = $this->options->get_option_value('nonce.off');
+
+        if (empty($value)) {
+            return;
+        }
+
+        check_ajax_referer('ea-bootstrap-form', 'check');
+    }
+
+    public function save_custom_columns()
+    {
+        $raw_fields = $_POST['fields'];
+
+        $fields = explode(',', $raw_fields);
+
+        $columns = array_map(function($element) {
+            return trim($element);
+        }, $fields);
+
+        $all_columns = $this->models->get_all_tags_for_template();
+
+        $result = array();
+
+        foreach ($columns as $column) {
+            if (in_array($column, $all_columns)) {
+                $result[] = $column;
+            }
+        }
+
+        update_option('ea_excel_columns', implode(',', $result));
+
+        die;
     }
 }

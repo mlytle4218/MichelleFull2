@@ -4,7 +4,7 @@ Donate link: https://easy-appointments.net/
 Tags: appointment, appointments, Booking, calendar, plugin, reservation, reservations, wp appointment, reservation plugin, reservations, schedule
 Requires at least: 3.7
 Tested up to: 4.9
-Stable tag: 1.12.5
+Stable tag: 2.3.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,8 @@ https://easy-appointments.net/documentation/
     - Polish translation (thanks to <a href="mailto:maciej@bauza.pl" target="_blank">Maciej Bauza</a>)
     - Finnish translation thanks to Maija
     - Portuguese translation thanks to Antonio
+    - Portuguese Brazil translation thanks to seniweb
+    -
 * Labels
     - Hide price
     - Add custom currency
@@ -200,6 +202,86 @@ Note: you can have only one calendar on one page.
 17. Admin panel - Report - Time table overview
 
 == Changelog ==
+
+= 2.3.7 (2018-08-26) =
+* Added options for Sorting Location, Services and Workers for both customers form and Admin section
+
+= 2.3.6 (2018-08-12) =
+* Added Placeholder option for Custom Input fields
+
+= 2.3.5 (2018-07-29) =
+* Translation update
+* Localization for DateTime in Overview section
+* Added additional filters for customers email template
+
+= 2.3.4 (2018-07-06) =
+* Translation update
+* Added option to turn off customers form auto population from previous Appointments data
+
+= 2.3.3 (2018-06-11) =
+* Fixed issue with split time for services and time selection in form
+* Mail templates with escaped fields
+* Improved bot detection for mail links for confirm and cancel appointments
+
+= 2.3.2 (2018-06-02) =
+* Fixed styles and word wrap for GDPR link text
+* Added minDate and maxDate for calendar on customers form. Now you can set time span that can be selected for appointment.
+
+= 2.3.1 (2018-05-22) =
+* EU GDPR - checkbox and admin section with customize option such as label, error message, link to page with content
+
+= 2.3.0 (2018-05-12) =
+* Fixed issue with Events Calendar plugin that prevent activation of EasyAppointments
+
+= 2.2.4 (2018-04-18) =
+* Fixed issue with missing settings notification on user form even if settings are fine
+
+= 2.2.3 (2018-04-17) =
+* Fixed issue with slot step and case when price is hidden in customers form
+
+= 2.2.2 (2018-04-16) =
+* Fixed issue with selecting time slot
+
+= 2.2.1 (2018-04-15) =
+* Fixed issue with slot step value
+
+= 2.2.0 (2018-04-15) =
+* NEW - Custom slot step for customers
+* Added additional callback filters
+* Style improvements
+* Additional check for bots on confirm/cancel appointment via email link
+
+= 2.1.4 (2018-03-18) =
+* Added option for nonce in customers form
+
+= 2.1.3 (2018-03-11) =
+* Fixed issue with custom fields and html tags in it
+* Fixed issue with cyrillic labels and custom fields
+
+= 2.1.2 (2018-03-07) =
+* Added bot/crawler check for mail confirm/cancel link action
+
+= 2.1.1 (2018-03-06) =
+* Fix for custom styles that was not displaying
+
+= 2.1.0 (2018-03-04) =
+* Added option for custom columns and order in CSV export for excel
+* Fixed small issues
+
+= 2.0.1 (2018-02-18) =
+* Issue with PHP ASP tags turned on - message notification
+* Fixed issue with missing connection inside settings
+
+= 2.0.0 (2018-01-31) =
+* Fixed issue with wrong columns in exported CSV
+* Added support for Events that are more then one day long (backend)
+
+= 1.12.7 (2018-01-21) =
+* Improved error notifications inside customers form
+* New translations (BR & SK)
+
+= 1.12.6 (2018-01-14) =
+* Added additional filter for mail attachments
 
 = 1.12.5 (2018-01-05) =
 * Fixed issue with loading options on Settings Customize page

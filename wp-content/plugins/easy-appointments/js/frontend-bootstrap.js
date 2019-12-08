@@ -29,6 +29,10 @@
         init: function () {
             var plugin = this;
 
+            if (ea_settings['datepicker'] && ea_settings['datepicker'].length > 1) {
+                moment.locale(ea_settings['datepicker'].substr(0,2));
+            }
+
             plugin.settings.main_template = _.template(jQuery(plugin.settings.main_selector).html());
 
             plugin.settings.overview_template = _.template(jQuery(plugin.settings.overview_selector).html());
@@ -47,13 +51,15 @@
             jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ea_settings.datepicker] );
 
             var firstDay = ea_settings.start_of_week;
+            var minDate = (ea_settings.min_date === null) ? 0 : ea_settings.min_date;
 
             // datePicker
             this.$element.find('.date').datepicker({
                 onSelect : jQuery.proxy( plugin.dateChange, plugin ),
                 dateFormat : 'yy-mm-dd',
-                minDate: 0,
+                minDate: minDate,
                 firstDay: firstDay,
+                maxDate: ea_settings.max_date,
                 defaultDate: ea_settings.default_date,
                 // on month change event
                 onChangeMonthYear: function(year, month, widget) {
@@ -84,8 +90,13 @@
 
                 event.preventDefault();
 
-                jQuery(this).parent().children().removeClass('selected-time');
-                jQuery(this).addClass('selected-time');
+                var result = plugin.selectTimes(jQuery(this));
+
+                // check if we can select that field
+                if (!result) {
+                    alert(ea_settings['trans.slot-not-selectable']);
+                    return;
+                }
 
                 if (ea_settings['pre.reservation'] === '1') {
                     plugin.appSelected.apply(plugin);
@@ -131,8 +142,11 @@
                     plugin.scrollToElement(plugin.$element.find('.final'));
                 }
 
-                // load custom fields from localStorage
-                plugin.loadPreviousFormData(plugin.$element.find('form'));
+                // only load form if that option is not turned off
+                if (ea_settings['save_form_content'] !== '0') {
+                    // load custom fields from localStorage
+                    plugin.loadPreviousFormData(plugin.$element.find('form'));
+                }
             });
 
             // init blur next steps
@@ -146,6 +160,52 @@
 
             this.$element.find('.ea-cancel').on('click', jQuery.proxy( plugin.cancelApp, plugin ));
         },
+
+        selectTimes: function ($element) {
+            var plugin = this;
+
+            var serviceData = plugin.$element.find('[name="service"] > option:selected').data();
+            var duration = serviceData.duration;
+            var slot_step = serviceData.slot_step;
+
+            var takeSlots = parseInt(duration) / parseInt(slot_step);
+            var $nextSlots = $element.nextAll();
+
+            var forSelection = [];
+            forSelection.push($element);
+
+            if (($nextSlots.length + 1) < takeSlots) {
+                return false;
+            }
+
+            $element.parent().children().removeClass('selected-time');
+
+            jQuery.each($nextSlots, function (index, elem) {
+
+                var $elem = jQuery(elem);
+
+                if (index + 2 > takeSlots) {
+                    return false;
+                }
+
+                if ($elem.hasClass('time-disabled')) {
+                    return false;
+                }
+
+                forSelection.push($elem);
+            });
+
+            if (forSelection.length < takeSlots) {
+                return false;
+            }
+
+            jQuery.each(forSelection, function (index, elem) {
+                elem.addClass('selected-time');
+            });
+
+            return true;
+        },
+
         /**
          * Check if settings are ok
          *
@@ -289,7 +349,7 @@
 
             this.placeLoader(next_element.parent());
 
-            jQuery.get(ea_ajaxurl, options, function (response) {
+            var req = jQuery.get(ea_ajaxurl, options, function (response) {
                 next_element.empty();
 
                 // default
@@ -311,6 +371,11 @@
                         $option.data('price', element.price);
                     }
 
+                    if ('slot_step' in element) {
+                        $option.data('slot_step', element.slot_step);
+                        $option.data('duration', element.duration);
+                    }
+
                     next_element.append($option);
                 });
 
@@ -320,11 +385,17 @@
                 plugin.removeLoader();
 
                 plugin.scrollToElement(next_element.parent());
-            }, 'json')
-            .error(function(xhr, status) {
+            }, 'json');
+
+            // in case of failed ajax request
+            req.fail(function(xhr, status) {
 
                 if (xhr.status === 403) {
                     alert(ea_settings['trans.nonce-expired']);
+                }
+
+                if (xhr.status === 404) {
+                    alert(ea_settings['trans.ajax-call-not-available']);
                 }
 
                 if (xhr.status === 500) {
@@ -407,7 +478,7 @@
 
             this.placeLoader(calendarEl);
 
-            jQuery.get(ea_ajaxurl, options, function (response) {
+            var req = jQuery.get(ea_ajaxurl, options, function (response) {
 
                 next_element = jQuery(document.createElement('div'))
                     .addClass('time well well-lg');
@@ -465,21 +536,28 @@
                     plugin.settings.initScrollOff = false;
                 }
 
-            }, 'json')
-            .error(function(xhr, status) {
+            }, 'json');
+
+            req.always(function () {
+                plugin.refreshData(plugin.settings.store);
+                plugin.removeLoader();
+            });
+
+            // in case of failed ajax request
+            req.fail(function(xhr, status) {
 
                 if (xhr.status === 403) {
                     alert(ea_settings['trans.nonce-expired']);
+                }
+
+                if (xhr.status === 404) {
+                    alert(ea_settings['trans.ajax-call-not-available']);
                 }
 
                 if (xhr.status === 500) {
                     alert(ea_settings['trans.internal-error']);
                 }
 
-                plugin.removeLoader();
-            })
-            .always(function () {
-                plugin.refreshData(plugin.settings.store);
                 plugin.removeLoader();
             });
         },
@@ -517,7 +595,7 @@
 
                 fields.push({'name': 'check', 'value': ea_settings['check']});
 
-                jQuery.get(ea_ajaxurl, fields, function (result) {
+                var req = jQuery.get(ea_ajaxurl, fields, function (result) {
                     self.settings.store = result;
                     self.refreshData(result);
 
@@ -534,11 +612,15 @@
                             self.$element.find('.time-row').remove();
                         }
                     }
-                }, 'json')
-                .error(function(xhr, status) {
+                }, 'json');
 
+                req.fail(function (xhr, status) {
                     if (xhr.status === 403) {
                         alert(ea_settings['trans.nonce-expired']);
+                    }
+
+                    if (xhr.status === 404) {
+                        alert(ea_settings['trans.ajax-call-not-available']);
                     }
 
                     if (xhr.status === 500) {
@@ -546,7 +628,7 @@
                     }
 
                     plugin.removeLoader();
-                });
+                })
             }
         },
         /**
@@ -600,6 +682,7 @@
                 service: this.$element.find('[name="service"]').val(),
                 worker: this.$element.find('[name="worker"]').val(),
                 date: this.$element.find('.date').datepicker().val(),
+                end_date: this.$element.find('.date').datepicker().val(),
                 start: this.$element.find('.selected-time').data('val'),
                 check: ea_settings['check'],
                 action: 'ea_res_appointment'
@@ -617,7 +700,7 @@
             var format = ea_settings['date_format'] + ' ' + ea_settings['time_format'];
             booking_data.date_time = moment(booking_data.date + ' ' + booking_data.time, ea_settings['defult_detafime_format']).format(format);
 
-            jQuery.get(ea_ajaxurl, options, function (response) {
+            var req = jQuery.get(ea_ajaxurl, options, function (response) {
                 plugin.res_app = response.id;
 
                 plugin.$element.find('.step').addClass('disabled');
@@ -646,11 +729,15 @@
                     plugin.finalComformation(event);
                 });
 
-            }, 'json')
-            .error(function(xhr, status) {
+            }, 'json');
 
+            req.fail(function (xhr, status) {
                 if (xhr.status === 403) {
                     alert(ea_settings['trans.nonce-expired']);
+                }
+
+                if (xhr.status === 404) {
+                    alert(ea_settings['trans.ajax-call-not-available']);
                 }
 
                 if (xhr.status === 500) {
@@ -658,10 +745,11 @@
                 }
 
                 plugin.removeLoader();
-            })
-            .always(jQuery.proxy(function () {
+            });
+
+            req.always(jQuery.proxy(function () {
                 plugin.removeLoader();
-            }, plugin));
+            }));
         },
         /**
          *
@@ -736,7 +824,7 @@
 
             options.action = 'ea_final_appointment';
 
-            jQuery.get(ea_ajaxurl, options, function (response) {
+            var req = jQuery.get(ea_ajaxurl, options, function (response) {
                 // store values from form
                 plugin.storeFormData(options);
 
@@ -756,14 +844,21 @@
                     }, 2000);
                 }
             }, 'json')
-                .fail(jQuery.proxy(function (response, status, error) {
-                    alert(response.responseJSON.message);
-                    this.$element.find('.ea-submit').prop('disabled', false);
-                }, plugin));
+            .fail(jQuery.proxy(function (response, status, error) {
+                alert(response.responseJSON.message);
+                this.$element.find('.ea-submit').prop('disabled', false);
+            }, plugin));
         },
 
+        /**
+         * Checkout process
+         * @param event
+         */
         singleConformation: function (event) {
-            event.preventDefault();
+            if (typeof event !== 'undefined') {
+                event.preventDefault();
+            }
+
             var plugin = this;
 
             var form = this.$element.find('form');
@@ -780,6 +875,7 @@
                 service: this.$element.find('[name="service"]').val(),
                 worker: this.$element.find('[name="worker"]').val(),
                 date: this.$element.find('.date').datepicker().val(),
+                end_date: this.$element.find('.date').datepicker().val(),
                 start: this.$element.find('.selected-time').data('val'),
                 check: ea_settings['check'],
                 action: 'ea_res_appointment'

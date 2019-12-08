@@ -4,7 +4,7 @@
  * Plugin Name: Easy Appointments
  * Plugin URI: https://easy-appointments.net/
  * Description: Simple and easy to use management system for Appointments and Bookings
- * Version: 1.12.5
+ * Version: 2.3.7
  * Author: Nikola Loncar
  * Author URI: http://nikolaloncar.com
  * Text Domain: easy-appointments
@@ -49,7 +49,7 @@ if (version_compare(PHP_VERSION, '5.3', '<')) {
 }
 
 /**
- * Entery point
+ * Entry point
  */
 class EasyAppointment
 {
@@ -121,23 +121,52 @@ class EasyAppointment
         global $wpdb;
 
         $this->container = new tad_DI52_Container();
-
         $this->container['wpdb'] = $wpdb;
-        $this->container['options'] = array('EAOptions', '@wpdb');
-        $this->container['table_columns'] = array('EATableColumns');
-        $this->container['db_models'] = array('EADBModels', '@wpdb', '@table_columns');
 
-        // if there is only class name it it simple string
-        $this->container['datetime'] = 'EADateTime';
+        $this->container['options'] = function($container) {
+            return new EAOptions($container['wpdb']);
+        };
 
-        $this->container['logic'] = array('EALogic', '@wpdb', '@db_models', '@options');
-        $this->container['install_tools'] = array('EAInstallTools', '@wpdb', '@db_models', '@options');
+        $this->container['table_columns'] = function ($container) {
+            return new EATableColumns();
+        };
 
-        $this->container['report'] = array('EAReport', '@logic', '@options');
-        $this->container['admin_panel'] = array('EAAdminPanel', '@options', '@logic', '@db_models', '@datetime' );
-        $this->container['frontend'] = array('EAFrontend', '@db_models', '@options', '@datetime');
-        $this->container['ajax'] = array('EAAjax', '@db_models', '@options', '@mail', '@logic', '@report');
-        $this->container['mail'] = array('EAMail', '@wpdb', '@db_models', '@logic', '@options');
+        $this->container['db_models'] = function ($container) {
+            return new EADBModels( $container['wpdb'], $container['table_columns'], $container['options']);
+        };
+
+        $this->container['datetime'] = function ($container) {
+            return new EADateTime();
+        };
+
+        $this->container['logic'] = function ($container) {
+            return new EALogic($container['wpdb'], $container['db_models'], $container['options']);
+        };
+
+        $this->container['install_tools'] = function ($container) {
+            return new EAInstallTools( $container['wpdb'], $container['db_models'], $container['options']);
+        };
+
+        $this->container['report'] = function ($container) {
+            return new EAReport($container['logic'], $container['options']);
+        };
+
+        $this->container['admin_panel'] = function ($container) {
+            return new EAAdminPanel($container['options'], $container['logic'], $container['db_models'], $container['datetime'] );
+        };
+
+        $this->container['frontend'] = function ($container) {
+            return new EAFrontend($container['db_models'], $container['options'], $container['datetime']);
+        };
+
+        $this->container['ajax'] = function ($container) {
+            return new EAAjax($container['db_models'], $container['options'], $container['mail'], $container['logic'], $container['report']);
+        };
+
+        $this->container['mail'] = function ($container) {
+            return new EAMail($container['wpdb'], $container['db_models'], $container['logic'], $container['options']);
+        };
+
     }
 
     /**

@@ -38,8 +38,8 @@ class EAFrontend
      */
     function __construct($models, $options, $datetime)
     {
-        $this->options = $options;
-        $this->models = $models;
+        $this->options  = $options;
+        $this->models   = $models;
         $this->datetime = $datetime;
     }
 
@@ -159,8 +159,11 @@ class EAFrontend
     {
         $code_params = shortcode_atts(array(
             'scroll_off'           => false,
+            'save_form_content'    => true,
             'start_of_week'        => get_option('start_of_week', 0),
             'default_date'         => date('Y-m-d'),
+            'min_date'             => null,
+            'max_date'             => null,
             'show_remaining_slots' => '0'
         ), $atts);
 
@@ -168,13 +171,17 @@ class EAFrontend
 
         $settings['check'] = wp_create_nonce('ea-bootstrap-form');
 
-        $settings['scroll_off'] = $code_params['scroll_off'];
+        $settings['scroll_off']           = $code_params['scroll_off'];
+        $settings['start_of_week']        = $code_params['start_of_week'];
+        $settings['default_date']         = $code_params['default_date'];
+        $settings['min_date']             = $code_params['min_date'];
+        $settings['max_date']             = $code_params['max_date'];
+        $settings['show_remaining_slots'] = $code_params['show_remaining_slots'];
+        $settings['save_form_content']    = $code_params['save_form_content'];
+
         $settings['trans.please-select-new-date'] = __('Please select another day', 'easy-appointments');
         $settings['trans.date-time'] = __('Date & time', 'easy-appointments');
         $settings['trans.price'] = __('Price', 'easy-appointments');
-        $settings['start_of_week'] = $code_params['start_of_week'];
-        $settings['default_date'] = $code_params['default_date'];
-        $settings['show_remaining_slots']  = $code_params['show_remaining_slots'];
 
         // datetime format
         $settings['time_format'] = $this->datetime->convert_to_moment_format(get_option('time_format', 'H:i'));
@@ -183,6 +190,7 @@ class EAFrontend
 
         $settings['trans.nonce-expired'] = __('Form validation code expired. Please refresh page in order to continue.', 'easy-appointments');
         $settings['trans.internal-error'] = __('Internal error. Please try again later.', 'easy-appointments');
+        $settings['trans.ajax-call-not-available'] = __('Unable to make ajax request. Please try again later.', 'easy-appointments');
 
         $customCss = $settings['custom.css'];
         $customCss = strip_tags($customCss);
@@ -204,9 +212,10 @@ class EAFrontend
         $meta = $this->models->get_all_rows("ea_meta_fields", array(), array('position' => 'ASC'));
         $custom_form = $this->generate_custom_fields($meta);
 
-        ob_start();
+        // add custom CSS
+        wp_add_inline_style( 'ea-frontend-style', $customCss );
 
-        echo "<style type='text/css'>{$customCss}</style>";
+        ob_start();
 
         // require tempalte
         require EA_SRC_DIR . 'templates/booking.overview.tpl.php';
@@ -254,10 +263,20 @@ class EAFrontend
                     <?php if (!empty($settings['show.iagree'])) : ?>
                         <p>
                             <label
-                                style="font-size: 65%; width: 80%;"><?php _e('I agree with terms and conditions', 'easy-appointments'); ?>
+                                style="font-size: 65%; width: 80%;" class="i-agree"><?php _e('I agree with terms and conditions', 'easy-appointments'); ?>
                                 * : </label><input style="width: 15%;" type="checkbox" name="iagree"
                                                    data-rule-required="true"
                                                    data-msg-required="<?php _e('You must agree with terms and conditions', 'easy-appointments'); ?>">
+                        </p>
+                        <br>
+                    <?php endif; ?>
+                    <?php if (!empty($settings['gdpr.on'])) : ?>
+                        <p>
+                            <label
+                                    style="font-size: 65%; width: 80%;" class="gdpr"><?php echo $settings['gdpr.label'];?>
+                                * : </label><input style="width: 15%;" type="checkbox" name="iagree"
+                                                   data-rule-required="true"
+                                                   data-msg-required="<?php echo $settings['gdpr.message'];?>">
                         </p>
                         <br>
                     <?php endif; ?>
@@ -347,17 +366,20 @@ class EAFrontend
             'worker'               => null,
             'width'                => '400px',
             'scroll_off'           => false,
+            'save_form_content'    => true,
             'layout_cols'          => '1',
             'start_of_week'        => get_option('start_of_week', 0),
             'rtl'                  => '0',
             'default_date'         => date('Y-m-d'),
+            'min_date'             => null,
+            'max_date'             => null,
             'show_remaining_slots' => '0'
         ), $atts);
 
         // check params
         apply_filters('ea_bootstrap_shortcode_params', $atts);
 
-        // used inside tempalte ea_bootstrap.tpl.php
+        // used inside template ea_bootstrap.tpl.php
         $location_id = $code_params['location'];
         $service_id  = $code_params['service'];
         $worker_id   = $code_params['worker'];
@@ -372,7 +394,10 @@ class EAFrontend
         $settings['start_of_week']         = $code_params['start_of_week'];
         $settings['rtl']                   = $code_params['rtl'];
         $settings['default_date']          = $code_params['default_date'];
+        $settings['min_date']              = $code_params['min_date'];
+        $settings['max_date']              = $code_params['max_date'];
         $settings['show_remaining_slots']  = $code_params['show_remaining_slots'];
+        $settings['save_form_content']     = $code_params['save_form_content'];
 
         // LOCALIZATION
         $settings['trans.please-select-new-date'] = __('Please select another day', 'easy-appointments');
@@ -394,9 +419,11 @@ class EAFrontend
         $settings['trans.price'] = __('Price', 'easy-appointments');
         $settings['trans.iagree'] = __('I agree with terms and conditions', 'easy-appointments');
         $settings['trans.field-iagree'] = __('You must agree with terms and conditions', 'easy-appointments');
+        $settings['trans.slot-not-selectable'] = __('You can\'t select this time slot!\'', 'easy-appointments');
 
         $settings['trans.nonce-expired'] = __('Form validation code expired. Please refresh page in order to continue.', 'easy-appointments');
         $settings['trans.internal-error'] = __('Internal error. Please try again later.', 'easy-appointments');
+        $settings['trans.ajax-call-not-available'] = __('Unable to make ajax request. Please try again later.', 'easy-appointments');
 
         // datetime format
         $settings['time_format'] = $this->datetime->convert_to_moment_format(get_option('time_format', 'H:i'));
@@ -435,9 +462,12 @@ class EAFrontend
             wp_enqueue_style('ea-frontend-bootstrap');
         }
 
+        // add custom CSS
+        wp_add_inline_style( 'ea-bootstrap', $customCss );
+
         ob_start();
 
-        echo "<style type='text/css'>{$customCss}</style>";
+        // echo "<style type='text/css'>{$customCss}</style>";
 
         // FORM TEMPLATE
         if ($settings['rtl'] == '1') {
@@ -482,7 +512,11 @@ class EAFrontend
         // If there is only one result, like one worker in whole system or one location etc
         if (count($rows) == 1) {
             $price = !empty($rows[0]->price) ? " data-price='{$rows[0]->price}'" : '';
-            echo "<option value='{$rows[0]->id}' selected='selected'$price>{$rows[0]->name}</option>";
+            if ($type === 'services') {
+                echo "<option data-duration='{$rows[0]->duration}' data-slot_step='{$rows[0]->slot_step}' value='{$rows[0]->id}' selected='selected'$price>{$rows[0]->name}</option>";
+            } else {
+                echo "<option value='{$rows[0]->id}' selected='selected'$price>{$rows[0]->name}</option>";
+            }
             return;
         }
 
@@ -491,7 +525,7 @@ class EAFrontend
             foreach ($rows as $row) {
                 if ($row->id == $service_id) {
                     $price = !empty($row->price) ? " data-price='{$row->price}'" : '';
-                    echo "<option value='{$row->id}' selected='selected'$price>{$row->name}</option>";
+                    echo "<option value='{$row->id}' data-duration='{$row->duration}' data-slot_step='{$row->slot_step}' selected='selected'$price>{$row->name}</option>";
                     return;
                 }
             }
@@ -522,12 +556,23 @@ class EAFrontend
         foreach ($rows as $row) {
             $price = !empty($row->price) ? " data-price='{$row->price}'" : '';
 
-            if ($hide_price == '1' || $type != 'services') {
-                echo "<option value='{$row->id}'$price>{$row->name}</option>";
+            // case when we are hiding price
+            if ($hide_price == '1') {
+
+                // for all other types
+                if ($type != 'services') {
+                    echo "<option value='{$row->id}'>{$row->name}</option>";
+                } else if ($type == 'services') {
+                    // for service
+                    echo "<option data-duration='{$row->duration}' data-slot_step='{$row->slot_step}' value='{$row->id}'>{$row->name}</option>";
+                }
+
             } else if ($type == 'services') {
                 $name = $row->name;
                 $name_price = ($before == '1') ? $name . ' ' . $currency . $row->price : $name . ' ' . $row->price . $currency;
-                echo "<option value='{$row->id}'$price>{$name_price}</option>";
+                echo "<option data-duration='{$row->duration}' data-slot_step='{$row->slot_step}' value='{$row->id}'$price>{$name_price}</option>";
+            } else {
+                echo "<option value='{$row->id}'>{$row->name}</option>";
             }
         }
     }

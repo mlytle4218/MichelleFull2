@@ -4,14 +4,14 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easy-"
 "appointments\n"
 "POT-Creation-Date: 2016-11-18 15:58+0100\n"
-"PO-Revision-Date: 2017-01-11 18:25+0100\n"
+"PO-Revision-Date: 2018-04-15 22:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
@@ -42,7 +42,7 @@ msgstr "Une erreur s'est produite ! Veuillez ré-essayer"
 
 #: src/frontend.php:129 src/frontend.php:271
 msgid "Please select another day"
-msgstr "Chisissez un autre jour"
+msgstr "Choisissez un autre jour"
 
 #: src/frontend.php:130 src/frontend.php:284
 #: src/templates/appointments.tpl.php:85

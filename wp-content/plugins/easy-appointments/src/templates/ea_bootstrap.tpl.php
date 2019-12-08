@@ -66,7 +66,7 @@
                             %> : </label>
                         <div class="col-sm-8">
                             <% if(item.type === 'INPUT') { %>
-                            <input class="form-control custom-field" maxlength="499" type="text" name="<%= item.slug %>"
+                            <input class="form-control custom-field" maxlength="499" type="text" name="<%= item.slug %>" placeholder="<%= item.mixed %>"
                             <% if (item.required == "1") { %>data-rule-required="true" data-msg-required="<%=
                             settings['trans.field-required'] %>"<% } %> <% if (item.validation == "email") {
                             %>data-rule-email="true" data-msg-email="<%= settings['trans.error-email'] %>"<% } %>>
@@ -101,6 +101,25 @@
                                     <input id="ea-iagree" name="iagree" type="checkbox" data-rule-required="true"
                                            data-msg-required="<%= settings['trans.field-iagree'] %>">
                                     <%= settings['trans.iagree'] %>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    <% if (settings['gdpr.on'] == '1') { %>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">&nbsp;</label>
+                        <div class="col-sm-8">
+                            <div class="checkbox">
+                                <label class="gdpr">
+                                    <input id="ea-gdpr" name="gdpr" type="checkbox" data-rule-required="true"
+                                           data-msg-required="<%= settings['gdpr.message'] %>">
+                                    <% if (settings['gdpr.link'] != '') { %>
+                                        <a href="<%= settings['gdpr.link'] %>" target="_blank"><%= settings['gdpr.label'] %></a>
+                                    <% } else {%>
+                                        <%= settings['gdpr.label'] %>
+                                    <% } %>
                                 </label>
                             </div>
                         </div>

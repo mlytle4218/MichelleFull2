@@ -13,7 +13,7 @@ class EADBModels
     /**
      * WPDB
      *
-     * @var $wpdb
+     * @var wpdb $wpdb
      **/
     protected $wpdb;
 
@@ -22,10 +22,16 @@ class EADBModels
      */
     protected $table_columns;
 
-    function __construct($wpdb, $table_columns)
+    /**
+     * @var EAOptions
+     */
+    protected $options;
+
+    function __construct($wpdb, $table_columns, $options)
     {
         $this->wpdb = $wpdb;
         $this->table_columns = $table_columns;
+        $this->options = $options;
     }
 
     /**
@@ -316,9 +322,10 @@ class EADBModels
 
     /**
      * @param $options
+     * @param string $order
      * @return array|null|object
      */
-    public function get_next($options)
+    public function get_next($options, $order = '')
     {
         $table_name = $this->wpdb->prefix . 'ea_connections';
 
@@ -363,6 +370,10 @@ class EADBModels
         $next_table = $this->wpdb->prefix . "ea_{$entity_table}";
 
         $query = "SELECT * FROM $next_table WHERE id IN ({$ids})";
+
+        if ($order != '') {
+            $query .= $order;
+        }
 
         return $this->wpdb->get_results($query);
     }
@@ -480,6 +491,8 @@ class EADBModels
                     $query .= ' AND c.worker=' . $worker_id;
                 }
 
+                $query .= $this->get_order_by_part('ea_locations', true);
+
                 break;
             case 'ea_services':
                 $query  = "SELECT DISTINCT s.* FROM {$table} s INNER JOIN $connections c ON (s.id = c.service) WHERE c.is_working=1";
@@ -492,6 +505,8 @@ class EADBModels
                     $query .= ' AND c.worker=' . $worker_id;
                 }
 
+                $query .= $this->get_order_by_part('ea_services', true);
+
                 break;
             case 'ea_staff':
                 $query  = "SELECT DISTINCT w.* FROM {$table} w INNER JOIN $connections c ON (w.id = c.worker) WHERE c.is_working=1";
@@ -503,6 +518,8 @@ class EADBModels
                 if (!empty($service_id) && is_numeric($service_id)) {
                     $query .= ' AND c.service=' . $service_id;
                 }
+
+                $query .= $this->get_order_by_part('ea_workers', true);
 
                 break;
         };
@@ -527,5 +544,104 @@ class EADBModels
         $query = "SELECT location, service, worker FROM $connections WHERE is_working=1";
 
         return $this->wpdb->get_results($query);
+    }
+
+    /**
+     * @return array
+     */
+    public function get_all_tags_for_template()
+    {
+        $fields = json_decode($this->get_pre_cache_json('ea_meta_fields', array('position' => 'ASC')), true);
+
+        // default tags
+        $default = array(
+            'id', 'location', 'service', 'worker', 'date', 'start', 'end', 'end_date', 'status', 'user', 'price', 'ip', 'session'
+        );
+
+        $mapped = array_map(function($element) {
+            return $element['slug'];
+        }, $fields);
+
+        return array_merge($default, $mapped);
+    }
+
+    /**
+     * @return int
+     */
+    public function get_next_meta_field_id() {
+        $meta = $this->wpdb->prefix . 'meta_fields';
+
+        $query = "SELECT MAX(id) FROM $meta";
+
+        $max = (int)$this->wpdb->get_var($query);
+
+        return $max + 1;
+    }
+
+
+    public function update_option($option)
+    {
+        $table_name = $this->wpdb->prefix . 'ea_options';
+        $key = $option['ea_key'];
+        $query = $this->wpdb->prepare("DELETE FROM $table_name WHERE ea_key=%s", $key);
+
+        $this->wpdb->query($query);
+
+        return $this->wpdb->insert($table_name, $option);
+    }
+
+    /**
+     * @param string $table_name
+     * @param bool $as_string
+     * @return string|array
+     */
+    public function get_order_by_part($table_name, $as_string = false)
+    {
+        /**
+         *
+         */
+        $mapping = array(
+            'ea_locations' => array(
+                'sort'  => 'sort.locations-by',
+                'order' => 'order.locations-by'
+            ),
+            'ea_workers'   => array(
+                'sort'  => 'sort.workers-by',
+                'order' => 'order.workers-by'
+            ),
+            'ea_services'  => array(
+                'sort'  => 'sort.services-by',
+                'order' => 'order.services-by'
+            ),
+        );
+
+        if (!array_key_exists($table_name, $mapping)) {
+            if ($as_string) {
+                return " ORDER BY `id` DESC";
+            }
+
+            return array('id' => 'DESC');
+        }
+
+        $column = $this->options->get_option_value($mapping[$table_name]['sort'], 'id');
+        $order = $this->options->get_option_value($mapping[$table_name]['order'], 'DESC');
+
+        if (!in_array($order, array('ASC', 'DESC'))) {
+            if ($as_string) {
+                return " ORDER BY `id` DESC";
+            }
+
+            return array('id' => 'DESC');
+        }
+
+        $this->wpdb->escape_by_ref($column);
+        $this->wpdb->escape_by_ref($order);
+
+        if ($as_string) {
+
+            return " ORDER BY `$column` $order";
+        }
+
+        return array($column => $order);
     }
 }

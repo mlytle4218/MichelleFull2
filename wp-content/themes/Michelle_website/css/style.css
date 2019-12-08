@@ -112,10 +112,10 @@ body {
 }
 /* The Close Button */
 .close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
+    position: relative;
+    top: -5%;
+    right: 50%;
+    color: #fff;
     font-size: 40px;
     font-weight: bold;
     transition: 0.3s;
@@ -157,10 +157,30 @@ div.desc {
     width: 24.99999%;
 }
 
+.responsive_links {
+    float: left;
+    width: 32.9999999%;
+    position: relative;
+
+}
+.responsive_links img {
+    width: 100%;
+    height: auto;
+    padding: 6px 6px;
+
+}
+
+
 @media only screen and (max-width: 700px){
     .responsive {
         width: 49.99999%;
         margin: 6px 0;
+    }
+   .responsive_links {
+       width: 49.99999%;
+    }
+   .text {
+      font-size: 2em;
     }
 }
 
@@ -168,9 +188,48 @@ div.desc {
     .responsive {
         width: 100%;
     }
+   .responsive_links {
+       width: 100%;
+    }
+   .text {
+      font-size: 1em;
+    }
+    .responsive_links .overlay {
+     opacity: .65;
+    }
+
 }
 .clearfix:after {
     content: "";
     display: table;
     clear: both;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+/*  background-color: #008CBA;*/
+  background-color: #000;
+}
+
+.responsive_links:hover .overlay {
+  opacity: .85;
+}
+
+.text {
+  font-family: "Times New Roman", Times, serif;
+  color: white;
+  font-size: 4em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
 }

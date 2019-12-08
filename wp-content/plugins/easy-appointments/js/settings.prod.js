@@ -103,6 +103,7 @@
         defaults : {
             name:"",
             duration: 60,
+            slot_step: 60,
             price: 10
         },
         url : function() {
@@ -141,7 +142,7 @@
             day_of_week : [],
             time_from : null,
             time_to : null,
-            day_from : '2017-01-01',
+            day_from : '2018-01-01',
             day_to : '2020-01-01',
             is_working : 0
         },
@@ -199,6 +200,7 @@
             date        : null,
             start       : null,
             end         : null,
+            end_date    : null,
             description : null,
             status      : null,
             user        : null,
@@ -871,6 +873,7 @@
 
                 if ($elem.data('prop') === 'date') {
                     appointment.set($elem.data('prop'), moment(jQuery(elem).datepicker('getDate')).format('YYYY-MM-DD'));
+                    appointment.set('end_date', moment(jQuery(elem).datepicker('getDate')).format('YYYY-MM-DD'));
                 } else {
                     appointment.set($elem.data('prop'), $elem.val());
                 }

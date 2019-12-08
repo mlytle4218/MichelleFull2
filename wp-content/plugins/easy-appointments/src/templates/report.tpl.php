@@ -57,14 +57,25 @@
 	<div id="overview-data">
 </div>
 </script>
-<!-- template for overview report -->
+
+<!-- Template for overview report -->
 <script type="text/template" id="ea-report-excel">
 <div>
-	<form id="ea-export-form" action="<%= export_link %>" method="get">
-	<input type="hidden" name="action" value="ea_export">
-		<?php _e('From','easy-appointments');?> : <input class="ea-datepicker" type="text" name="ea-export-from"> <?php _e('To','easy-appointments');?> : <input class="ea-datepicker" type="text" name="ea-export-to">
-		<p><?php _e('Export data to CSV, can be imported to MS Excel, OpenOffice Calc... ', 'easy-appointments');?></p>
-		<button class="eadownloadcsv button-primary"><?php _e('Export data', 'easy-appointments');?></button>
-	</form>
+    <div>
+        <a id="ea-export-customize-columns-toggle" href="#"><?php _e('Customize columns for export!','easy-appointments');?></a>
+        <div id="ea-export-customize-columns" style="display: none;">
+            <p>Columns: <b><?php echo implode(', ', $this->models->get_all_tags_for_template());?></b></p>
+            <?php _e('Place fields separate by , for example: id,name,email','easy-appointments');?>
+            <p><input id="ea-export-custom-columns" type="text" style="width:800px" value="<?php echo get_option('ea_excel_columns', '');?>" /></p>
+            <button id="ea-export-save-custom-columns" class="btn"><?php _e('Save settings', 'easy-appointments');?></button>
+        </div>
+    </div>
+    <div>&nbsp;</div>
+    <form id="ea-export-form" action="<%= export_link %>" method="get">
+        <input type="hidden" name="action" value="ea_export">
+        <?php _e('From','easy-appointments');?> : <input class="ea-datepicker" type="text" name="ea-export-from"> <?php _e('To','easy-appointments');?> : <input class="ea-datepicker" type="text" name="ea-export-to">
+        <p><?php _e('Export data to CSV, can be imported to MS Excel, OpenOffice Calc... ', 'easy-appointments');?></p>
+        <button class="eadownloadcsv button-primary"><?php _e('Export data', 'easy-appointments');?></button>
+    </form>
 </div>
 </script>

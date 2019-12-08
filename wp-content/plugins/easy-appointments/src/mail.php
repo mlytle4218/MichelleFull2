@@ -99,6 +99,11 @@ class EAMail
             return;
         }
 
+        if ($this->is_bot()) {
+            wp_redirect(get_home_url());
+            return;
+        }
+
         $app_id = (int)$_GET['_ea-app'];
 
         $data = $this->models->get_appintment_by_id($app_id);
@@ -143,7 +148,9 @@ class EAMail
             // for admin
             do_action('ea_admin_email_notification', $app_data['id']);
 
-            header('Refresh:3; url=' . get_home_url());
+            $url = apply_filters( 'ea_confirmed_redirect_url', get_home_url());
+
+            header('Refresh:3; url=' . $url);
             die(__('Appointment has been confirmed.', 'easy-appointments'));
         }
 
@@ -168,11 +175,15 @@ class EAMail
             do_action('ea_admin_email_notification', $app_data['id']);
 
             if (new DateTime() > new DateTime($app_data['date'] . ' ' . $app_data['start'])) {
-                header('Refresh:3; url=' . get_home_url());
+                $url = apply_filters( 'ea_cant_be_canceled_redirect_url', get_home_url());
+
+                header('Refresh:3; url=' . $url);
                 die(__('Appointment can\'t be canceled', 'easy-appointments'));
             }
 
-            header('Refresh:3; url=' . get_home_url());
+            $url = apply_filters( 'ea_cancel_redirect_url', get_home_url());
+
+            header('Refresh:3; url=' . $url);
             die(__('Appointment has been canceled', 'easy-appointments'));
         }
     }
@@ -275,6 +286,8 @@ class EAMail
 
         $raw_data = $this->models->get_appintment_by_id($app_id);
 
+        $raw_data = $this->escape_data($raw_data);
+
         // worker email
         if ($this->options->get_option_value('send.worker.email', '0') == '1') {
             // if we only want to send it to worker
@@ -329,6 +342,7 @@ class EAMail
 
         $subject = str_replace(array_keys($params), array_values($params), $subject_template);
 
+        $emails = apply_filters('ea_admin_mail_address_list', $emails, $raw_data);
 
         $body_template = $this->options->get_option_value('mail.admin', '');
 
@@ -350,7 +364,15 @@ class EAMail
             $headers[] = 'From: ' . $send_from;
         }
 
-        $this->send_email($emails, $subject, $mail_content, $headers);
+        $files = array();
+
+        $files = apply_filters('ea_admin_mail_attachments', $files, $raw_data);
+
+        if (empty($files)) {
+            $files = array();
+        }
+
+        $this->send_email($emails, $subject, $mail_content, $headers, $files);
     }
 
     private function custom_admin_mail($body_template, $app_array)
@@ -396,6 +418,9 @@ class EAMail
 
         $app_array = $this->models->get_appintment_by_id($app_id);
 
+        // escape input data
+        $app_array = $this->escape_data($app_array);
+
         $params = array();
 
         $time_format = get_option('time_format', 'H:i');
@@ -421,7 +446,15 @@ class EAMail
         $params["#link_confirm#"] = $this->generate_link_element($app_array, 'confirm');
 
         $subject_template = $this->options->get_option_value('pending.subject.visitor.email', 'Reservation : #id#');
+
+        // Hook for customize subject of email template
+        $subject_template = apply_filters( 'ea_customer_mail_subject_template', $subject_template);
+
         $body_template = $this->options->get_option_value('mail.' . $app->status, 'mail');
+
+        // Hook for customize body of email template
+        $body_template = apply_filters( 'ea_customer_mail_template', $body_template);
+
         $send_from = $this->options->get_option_value('send.from.email', '');
 
         $body = str_replace(array_keys($params), array_values($params), $body_template);
@@ -491,5 +524,91 @@ class EAMail
         );
 
         $this->wpdb->insert($table_name, $data, array('%s', '%s', '%s'));
+    }
+
+    protected function escape_data($data)
+    {
+        $clean = array();
+
+        foreach ($data as $key => $value) {
+            $clean[$key] = htmlspecialchars($value);
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Check if it a bot
+     *
+     * @return bool
+     */
+    private function is_bot()
+    {
+
+        if (version_compare(PHP_VERSION, '5.3', '>=')) {
+            $crawlerDetect = new Jaybizzle\CrawlerDetect\CrawlerDetect;
+
+            return $crawlerDetect->isCrawler();
+        }
+
+        $bots = array(
+            'googlebot',
+            'adsbot-google',
+            'feedfetcher-google',
+            'yahoo',
+            'lycos',
+            'bloglines subscriber',
+            'dumbot',
+            'sosoimagespider',
+            'qihoobot',
+            'fast-webcrawler',
+            'superdownloads spiderman',
+            'linkwalker',
+            'msnbot',
+            'aspseek',
+            'webalta crawler',
+            'youdaobot',
+            'scooter',
+            'gigabot',
+            'charlotte',
+            'estyle',
+            'aciorobot',
+            'geonabot',
+            'msnbot-media',
+            'baidu',
+            'cococrawler',
+            'google',
+            'charlotte t',
+            'yahoo! slurp china',
+            'sogou web spider',
+            'yodaobot',
+            'msrbot',
+            'abachobot',
+            'sogou head spider',
+            'altavista',
+            'idbot',
+            'sosospider',
+            'yahoo! slurp',
+            'java vm',
+            'dotbot',
+            'litefinder',
+            'yeti',
+            'rambler',
+            'scrubby',
+            'baiduspider',
+            'accoona'
+        );
+
+        foreach($bots as $bot) {
+            if (strpos(strtolower($_SERVER['HTTP_USER_AGENT']), trim($bot)) !== false) {
+                return true;
+            }
+        }
+
+        if (!empty($_SERVER['HTTP_USER_AGENT']) and preg_match('~(bot|crawl)~i', $_SERVER['HTTP_USER_AGENT'])){
+            return true;
+        }
+
+        return false;
     }
 }

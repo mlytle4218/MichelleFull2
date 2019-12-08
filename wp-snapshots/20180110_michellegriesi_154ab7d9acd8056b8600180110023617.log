@@ -1,0 +1,81 @@
+********************************************************************************
+DUPLICATOR-LITE PACKAGE-LOG: January 10, 2018 2:36 am
+NOTICE: Do NOT post to public sites or forums 
+********************************************************************************
+VERSION:	1.2.30
+WORDPRESS:	4.9.1
+PHP INFO:	7.0.22-0ubuntu0.16.04.1 | SAPI: apache2handler
+SERVER:		Apache/2.4.18 (Ubuntu) 
+PHP TIME LIMIT: (0) no time limit imposed 
+PHP MAX MEMORY: 2048M (128M default) 
+MEMORY STACK: 2MB 
+
+********************************************************************************
+DATABASE:
+********************************************************************************
+BUILD MODE:   MYSQLDUMP
+MYSQLTIMEOUT: 5000
+MYSQLDUMP:    Is Supported 
+FILTERED: [] 
+RESPONSE: mysqldump: [Warning] Using a password on the command line interface can be insecure.
+ 
+TABLES: total:22 | filtered:0 | create:22 
+SQL CREATED: 20180110_michellegriesi_154ab7d9acd8056b8600180110023617_database.sql 
+SQL FILE SIZE: 720.35KB (737635) 
+SQL FILE TIME: 2018-01-10 02:36:26 
+SQL RUNTIME: 0.09 sec. 
+
+******************************************************************************** 
+ARCHIVE (ZIP): 
+******************************************************************************** 
+ARCHIVE DIR:  /var/www/html/michellegriesi.com/MichelleFull 
+ARCHIVE FILE: 20180110_michellegriesi_154ab7d9acd8056b8600180110023617_archive.zip 
+FILTERS: *OFF* 
+DIRS:
+	not set 
+FILES:
+	not set 
+EXTS:  not set 
+---------------------------------------- 
+COMPRESSING 
+SIZE:	73.45MB 
+STATS:	Dirs 688 | Files 6,567 
+SQL ADDED: 20180110_michellegriesi_154ab7d9acd8056b8600180110023617_database.sql 
+ZipArchive Object
+(
+    [status] => 0
+    [statusSys] => 0
+    [numFiles] => 7255
+    [filename] => /var/www/html/michellegriesi.com/MichelleFull/wp-snapshots/tmp/20180110_michellegriesi_154ab7d9acd8056b8600180110023617_archive.zip
+    [comment] => 
+)
+ 
+COMPRESSION RESULT: '1' 
+COMPRESSED SIZE: 44.92MB 
+ARCHIVE RUNTIME: 6.51 sec. 
+MEMORY STACK: 4MB 
+
+******************************************************************************** 
+MAKE INSTALLER: 
+******************************************************************************** 
+Build Start 
+Build Finished 
+Preping for use 
+PACK SIZE:  
+Template parsed with new data 
+Complete [/var/www/html/michellegriesi.com/MichelleFull/wp-snapshots/tmp/20180110_michellegriesi_154ab7d9acd8056b8600180110023617_installer.php] 
+Added to archive 
+
+******************************************************************************** 
+INTEGRITY CHECKS: 
+******************************************************************************** 
+SQL File: 720.35KB 
+Installer File: 443.37KB 
+Archive File: 44.92MB  
+
+********************************************************************************
+RECORD ID:[1]
+TOTAL PROCESS RUNTIME: 6.87 sec.
+PEAK PHP MEMORY USED: 6MB
+DONE PROCESSING => 20180110_michellegriesi January 10, 2018 2:36 am
+ 

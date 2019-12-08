@@ -90,6 +90,13 @@ select.field {
 	cursor: pointer;
 }
 
+.ea-sort-fields {
+	display: inline-block;
+	position: relative;
+	top: -6px;
+	margin-left: 15px;
+}
+
 .date-input {
 	width: 120px;
 }
@@ -268,8 +275,8 @@ textarea[data-key="custom.css"] {
 	display: inline-block;
 	cursor: pointer;
 	border-top: 1px solid transparent;
-	border-top: 1px solid transparent;
-	border-top: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
 }
 
 .mail-tab.selected {

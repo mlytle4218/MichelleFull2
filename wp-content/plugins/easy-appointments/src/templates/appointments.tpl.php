@@ -115,9 +115,8 @@
 		<% });%>
 	</td>
 	<td>
-		<strong><%= _.formatDate(row.date) %></strong><br>
-		<strong><%= _.formatTime(row.start) %></strong><br>
-		<strong><%= _.formatTime(row.end) %></strong><br>
+		<strong><%= _.formatDate(row.date) %> - <%= _.formatTime(row.start) %></strong><br>
+		<strong><%= _.formatDate(row.end_date) %> - <%= _.formatTime(row.end) %></strong>
 	</td>
 	<td>
 		<strong><%= eaData.Status[row.status] %></strong><br>
@@ -218,7 +217,7 @@
 			<tr>
 				<td colspan="6">
 					<label for="send-mail"> <?php _e('Send email notification :', 'easy-appointments');?> </label>
-					<input name="send-mail" type="checkbox">
+					<input name="send-mail" type="checkbox" checked="checked">
 				</td>
 				<td colspan="2" style="text-align: right;">
 					<button class="button button-primary btn-save"><?php _e('Save', 'easy-appointments');?></button>

@@ -3,24 +3,24 @@ msgstr ""
 "Project-Id-Version: Easy Appointments 1.8.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easy-appointments\n"
 "POT-Creation-Date: 2016-02-15 11:49:40+00:00\n"
-"PO-Revision-Date: Sat Feb 20 2016 22:47:04 GMT+0100 (Romance Standard Time)\n"
+"PO-Revision-Date: 2018-02-28 22:14+0100\n"
 "Last-Translator: admin5949 <queen_bmb@hotmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: Spanish (Spain)\n"
-"Plural-Forms: nplurals=2; plural=n != 1\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-SearchPath-0: ..\n"
-"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
-"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
-"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
-"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
-"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;__:1;"
+"_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;_x:1,2c;"
+"_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;esc_attr__:1;"
+"esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;esc_html_x:1,2c;"
+"comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
 "X-Loco-Target-Locale: es_ES\n"
-"X-Generator: Loco - https://localise.biz/"
+"X-Generator: Poedit 2.0.6\n"
+"Language-Team: \n"
+"X-Poedit-SearchPath-0: ..\n"
 
 #: src/admin.php:188 src/admin.php:189 src/templates/appointments.tpl.php:6
 msgid "Appointments"
@@ -41,8 +41,8 @@ msgstr "Informes"
 #: src/ajax.php:175
 msgid "Daily limit of booking request has been reached. Please contact us by email!"
 msgstr ""
-"Has superado el límite de solicitudes de reserva por día. Contacta con "
-"nosotros vía email, por favor."
+"Has superado el límite de solicitudes de reserva por día. Contacta con nosotros "
+"vía email, por favor."
 
 #: src/ajax.php:185
 msgid "Something went wrong! Please try again."
@@ -52,14 +52,12 @@ msgstr "Algo ha ido mal :( Inténtalo de nuevo, por favor."
 msgid "Please select another day"
 msgstr "Por favor, selecciona otro día."
 
-#: src/frontend.php:130 src/frontend.php:284
-#: src/templates/appointments.tpl.php:78
+#: src/frontend.php:130 src/frontend.php:284 src/templates/appointments.tpl.php:78
 msgid "Date & time"
 msgstr "Fecha y hora"
 
 #: src/frontend.php:131 src/frontend.php:287 src/templates/admin.tpl.php:121
-#: src/templates/appointments.tpl.php:79
-#: src/templates/appointments.tpl.php:205
+#: src/templates/appointments.tpl.php:79 src/templates/appointments.tpl.php:205
 #: src/templates/mail.notification.tpl.php:40
 msgid "Price"
 msgstr "Precio"
@@ -209,8 +207,8 @@ msgstr "Dirección"
 #: src/templates/admin.tpl.php:63 src/templates/admin.tpl.php:241
 #: src/templates/admin.tpl.php:317 src/templates/admin.tpl.php:542
 #: src/templates/appointments.tpl.php:11 src/templates/appointments.tpl.php:75
-#: src/templates/appointments.tpl.php:134
-#: src/templates/mail.notification.tpl.php:12 src/templates/report.tpl.php:32
+#: src/templates/appointments.tpl.php:134 src/templates/mail.notification.tpl.php:12
+#: src/templates/report.tpl.php:32
 msgid "Location"
 msgstr "Localización"
 
@@ -255,16 +253,14 @@ msgstr "Añadir nueva concurrencia"
 
 #: src/templates/admin.tpl.php:241 src/templates/admin.tpl.php:328
 #: src/templates/admin.tpl.php:534 src/templates/appointments.tpl.php:20
-#: src/templates/appointments.tpl.php:75
-#: src/templates/appointments.tpl.php:144
+#: src/templates/appointments.tpl.php:75 src/templates/appointments.tpl.php:144
 #: src/templates/mail.notification.tpl.php:16 src/templates/report.tpl.php:39
 msgid "Service"
 msgstr "Servicio"
 
 #: src/templates/admin.tpl.php:241 src/templates/admin.tpl.php:340
 #: src/templates/admin.tpl.php:550 src/templates/appointments.tpl.php:35
-#: src/templates/appointments.tpl.php:75
-#: src/templates/appointments.tpl.php:154
+#: src/templates/appointments.tpl.php:75 src/templates/appointments.tpl.php:154
 #: src/templates/mail.notification.tpl.php:20 src/templates/report.tpl.php:46
 msgid "Worker"
 msgstr "Empleado"
@@ -322,7 +318,7 @@ msgstr "Lunes"
 
 #: src/templates/admin.tpl.php:355
 msgid "Tuesday"
-msgstr "Jueves"
+msgstr "Martes"
 
 #: src/templates/admin.tpl.php:356
 msgid "Wednesday"
@@ -359,13 +355,13 @@ msgstr "Trabajo simultáneo"
 #: src/templates/admin.tpl.php:414
 msgid ""
 "Mark this option if you want to calculate free worker slots only by current "
-"service and location. If it's not marked system will check if worker is "
-"working on any location and service at current time."
+"service and location. If it's not marked system will check if worker is working on "
+"any location and service at current time."
 msgstr ""
-"Selecciona esta opción si deseas calcular los huecos de los trabajadores "
-"libres únicamente por el servicio y localización actual. Si no se selecciona,"
-" el sistema comprobará si el trabajador está en cualquier otro servicio o "
-"localización en ese momento."
+"Selecciona esta opción si deseas calcular los huecos de los trabajadores libres "
+"únicamente por el servicio y localización actual. Si no se selecciona, el sistema "
+"comprobará si el trabajador está en cualquier otro servicio o localización en ese "
+"momento."
 
 #: src/templates/admin.tpl.php:419
 msgid "Compatibility mode"
@@ -373,13 +369,13 @@ msgstr "Modo compatibilidad"
 
 #: src/templates/admin.tpl.php:425
 msgid ""
-"If you can't <strong>EDIT</strong> or <strong>DELETE</strong> conecntion or "
-"any other settings, you should mark this option. NOTE: <strong>After saving "
-"this options you must refresh page!</strong>"
+"If you can't <strong>EDIT</strong> or <strong>DELETE</strong> conecntion or any "
+"other settings, you should mark this option. NOTE: <strong>After saving this "
+"options you must refresh page!</strong>"
 msgstr ""
-"Si no puedes <strong>EDITAR</strong> o <strong>ELIMINAR</strong> reservas u "
-"otras opciones, debes marcar esta casilla. NOTA: <strong>¡Debes actualizar "
-"esta página tras guardar los cambios!</strong>"
+"Si no puedes <strong>EDITAR</strong> o <strong>ELIMINAR</strong> reservas u otras "
+"opciones, debes marcar esta casilla. NOTA: <strong>¡Debes actualizar esta página "
+"tras guardar los cambios!</strong>"
 
 #: src/templates/admin.tpl.php:430
 msgid "Max number of appointments"
@@ -387,11 +383,11 @@ msgstr "Número máximo de reservas"
 
 #: src/templates/admin.tpl.php:436
 msgid ""
-"Number of appointments that one visitor can make reservation before limit "
-"alert is shown. Appointments are count during one day."
+"Number of appointments that one visitor can make reservation before limit alert is "
+"shown. Appointments are count during one day."
 msgstr ""
-"Número máximo de reservas diarias que puede hacer un cliente antes de que se "
-"le muestre un aviso."
+"Número máximo de reservas diarias que puede hacer un cliente antes de que se le "
+"muestre un aviso."
 
 #: src/templates/admin.tpl.php:442
 msgid "Mail"
@@ -430,8 +426,8 @@ msgid ""
 "Enter email adress that will recive new reservation notification. Separate "
 "multiple emails with , (comma)"
 msgstr ""
-"Introduce el email en el que recibirás las notificaciones de nuevas reservas."
-" Separa múltiples emails con , (coma)"
+"Introduce el email en el que recibirás las notificaciones de nuevas reservas. "
+"Separa múltiples emails con , (coma)"
 
 #: src/templates/admin.tpl.php:484
 msgid "Admin notification subject"
@@ -440,8 +436,8 @@ msgstr "Asunto de la notificación al administrador"
 #: src/templates/admin.tpl.php:490 src/templates/admin.tpl.php:501
 msgid "You can use any tag that is available as in custom email notifications."
 msgstr ""
-"Puedes usar cualquiera de estas etiquetas, tal y como en la personalización "
-"de las notificaciones por email."
+"Puedes usar cualquiera de estas etiquetas, tal y como en la personalización de las "
+"notificaciones por email."
 
 #: src/templates/admin.tpl.php:495
 msgid "Visitor notification subject"
@@ -463,11 +459,11 @@ msgstr "Remitente"
 
 #: src/templates/admin.tpl.php:523
 msgid ""
-"Send from email adress (Example: Name &lt;name@domain.com&gt;). Leave blank "
-"to use default address."
+"Send from email adress (Example: Name &lt;name@domain.com&gt;). Leave blank to use "
+"default address."
 msgstr ""
-"Dirección del remitente (Ejemplo: Nombre &lt;nombre@dominio.com&gt;). Si se "
-"deja en blanco, se usará el email por defecto."
+"Dirección del remitente (Ejemplo: Nombre &lt;nombre@dominio.com&gt;). Si se deja "
+"en blanco, se usará el email por defecto."
 
 #: src/templates/admin.tpl.php:529
 msgid "Labels"
@@ -491,11 +487,11 @@ msgstr "Formato de la hora"
 
 #: src/templates/admin.tpl.php:584
 msgid ""
-"Notice : date/time formating for email notification are done by <b>Settings "
-"> General</b>."
+"Notice : date/time formating for email notification are done by <b>Settings > "
+"General</b>."
 msgstr ""
-"Nota: El formato de fecha y hora en las notificaciones de email viene dado "
-"por <b>Ajustes > Generales</b>."
+"Nota: El formato de fecha y hora en las notificaciones de email viene dado por "
+"<b>Ajustes > Generales</b>."
 
 #: src/templates/admin.tpl.php:589
 msgid "Calendar localization"
@@ -507,11 +503,11 @@ msgstr "Bloque horario"
 
 #: src/templates/admin.tpl.php:614
 msgid ""
-"(in minutes). Prevent visitor to make appointment if there are less minutes "
-"that this."
+"(in minutes). Prevent visitor to make appointment if there are less minutes that "
+"this."
 msgstr ""
-"(en minutos). Previene que el cliente reserve por intervalos de tiempo "
-"menores que este."
+"(en minutos). Previene que el cliente reserve por intervalos de tiempo menores que "
+"este."
 
 #: src/templates/admin.tpl.php:620
 msgid "Custom form fields"
@@ -533,11 +529,11 @@ msgstr "Estilos personalizados"
 
 #: src/templates/admin.tpl.php:660
 msgid ""
-"Place here custom css styles. This will be included in both standard and "
-"bootstrap widget."
+"Place here custom css styles. This will be included in both standard and bootstrap "
+"widget."
 msgstr ""
-"Escribe aquí tus propios estilos css. Afectarán en el widget estándar y en "
-"el bootstrap."
+"Escribe aquí tus propios estilos css. Afectarán en el widget estándar y en el "
+"bootstrap."
 
 #: src/templates/admin.tpl.php:665
 msgid "Turn off css files"
@@ -549,8 +545,8 @@ msgstr "Campo \"He leído y estoy de acuerdo...\""
 
 #: src/templates/admin.tpl.php:683
 msgid ""
-"I agree option at the end of form. If this is marked user must confirme \"I "
-"agree\" checkbox."
+"I agree option at the end of form. If this is marked user must confirme \"I agree"
+"\" checkbox."
 msgstr ""
 "Añadir \"He leído y acepto...\" en el formulario. Si se selecciona, el cliente "
 "deberá marcar esta casilla."
@@ -568,8 +564,8 @@ msgid ""
 "after visitor create appointment on front-end form. Leave blank to turn off "
 "redirect."
 msgstr ""
-"después de que el cliente reserve en el formulario. Si queda en blanco, no "
-"se redirigirá."
+"después de que el cliente reserve en el formulario. Si queda en blanco, no se "
+"redirigirá."
 
 #: src/templates/admin.tpl.php:723
 msgid "Currency"
@@ -604,8 +600,7 @@ msgstr "Cliente"
 msgid "Descrtiption"
 msgstr "Descripción"
 
-#: src/templates/appointments.tpl.php:79
-#: src/templates/mail.notification.tpl.php:36
+#: src/templates/appointments.tpl.php:79 src/templates/mail.notification.tpl.php:36
 msgid "Created"
 msgstr "Creado"
 

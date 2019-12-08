@@ -5,7 +5,7 @@
  * Description: Beginner friendly WordPress contact form plugin. Use our Drag & Drop form builder to create your WordPress forms.
  * Author:      WPForms
  * Author URI:  https://wpforms.com
- * Version:     1.4.3
+ * Version:     1.4.8.1
  * Text Domain: wpforms
  * Domain Path: languages
  *
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Don't allow multiple versions to be active
+// Don't allow multiple versions to be active.
 if ( class_exists( 'WPForms' ) ) {
 
 	/**
@@ -55,7 +55,7 @@ if ( class_exists( 'WPForms' ) ) {
 	 */
 	function wpforms_lite_notice() {
 
-		echo '<div class="notice notice-warning"><p>' . __( 'Please deactivate WPForms Lite before activating WPForms.', 'wpforms' ) . '</p></div>';
+		echo '<div class="notice notice-warning"><p>' . esc_html__( 'Please deactivate WPForms Lite before activating WPForms.', 'wpforms' ) . '</p></div>';
 
 		if ( isset( $_GET['activate'] ) ) {
 			unset( $_GET['activate'] );
@@ -79,7 +79,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object
+		 * @var WPForms
 		 */
 		private static $instance;
 
@@ -90,14 +90,14 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '1.4.3';
+		public $version = '1.4.8.1';
 
 		/**
 		 * The form data handler instance.
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_Form_Handler
+		 * @var WPForms_Form_Handler
 		 */
 		public $form;
 
@@ -106,7 +106,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_Entry_Handler
+		 * @var WPForms_Entry_Handler
 		 */
 		public $entry;
 
@@ -115,7 +115,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.4.3
 		 *
-		 * @var object WPForms_Entry_Fields_Handler
+		 * @var WPForms_Entry_Fields_Handler
 		 */
 		public $entry_fields;
 
@@ -124,7 +124,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.1.6
 		 *
-		 * @var object WPForms_Entry_Meta_Handler
+		 * @var WPForms_Entry_Meta_Handler
 		 */
 		public $entry_meta;
 
@@ -133,7 +133,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_Frontend
+		 * @var WPForms_Frontend
 		 */
 		public $frontend;
 
@@ -142,7 +142,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_Process
+		 * @var WPForms_Process
 		 */
 		public $process;
 
@@ -151,7 +151,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_Smart_Tags
+		 * @var WPForms_Smart_Tags
 		 */
 		public $smart_tags;
 
@@ -160,7 +160,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_Logging
+		 * @var WPForms_Logging
 		 */
 		public $logs;
 
@@ -169,7 +169,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.1.9
 		 *
-		 * @var object WPForms_Preview
+		 * @var WPForms_Preview
 		 */
 		public $preview;
 
@@ -178,7 +178,7 @@ if ( class_exists( 'WPForms' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var object WPForms_License
+		 * @var WPForms_License
 		 */
 		public $license;
 
@@ -205,21 +205,22 @@ if ( class_exists( 'WPForms' ) ) {
 
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPForms ) ) {
 
-				self::$instance = new WPForms;
+				self::$instance = new WPForms();
 				self::$instance->constants();
-				self::$instance->load_textdomain();
 				self::$instance->conditional_logic_addon_check();
 				self::$instance->includes();
 
-				// Load Pro or Lite specific files
+				// Load Pro or Lite specific files.
 				if ( self::$instance->pro ) {
 					require_once WPFORMS_PLUGIN_DIR . 'pro/wpforms-pro.php';
 				} else {
 					require_once WPFORMS_PLUGIN_DIR . 'lite/wpforms-lite.php';
 				}
 
+				add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ), 10 );
 				add_action( 'plugins_loaded', array( self::$instance, 'objects' ), 10 );
 			}
+
 			return self::$instance;
 		}
 
@@ -251,7 +252,7 @@ if ( class_exists( 'WPForms' ) ) {
 			}
 
 			// Plugin Slug - Determine plugin type and set slug accordingly.
-			if ( file_exists( WPFORMS_PLUGIN_DIR . 'pro/wpforms-pro.php' ) ) {
+			if ( apply_filters( 'wpforms_allow_pro_version', file_exists( WPFORMS_PLUGIN_DIR . 'pro/wpforms-pro.php' ) ) ) {
 				$this->pro = true;
 				define( 'WPFORMS_PLUGIN_SLUG', 'wpforms' );
 			} else {
@@ -280,8 +281,8 @@ if ( class_exists( 'WPForms' ) ) {
 			if ( function_exists( 'wpforms_conditional_logic' ) ) {
 
 				// Load core files needed to activate deactivate_plugins().
-				require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-				require_once( ABSPATH . 'wp-includes/pluggable.php' );
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+				require_once ABSPATH . 'wp-includes/pluggable.php';
 
 				// Deactivate Conditional Logic addon.
 				deactivate_plugins( 'wpforms-conditional-logic/wpforms-conditional-logic.php' );
@@ -300,13 +301,17 @@ if ( class_exists( 'WPForms' ) ) {
 		 */
 		private function includes() {
 
+			$this->includes_magic();
+
 			// Global includes.
 			require_once WPFORMS_PLUGIN_DIR . 'includes/functions.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-install.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-form.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-fields.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-frontend.php';
+			// TODO: class-templates.php should be loaded in admin area only.
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-templates.php';
+			// TODO: class-providers.php should be loaded in admin area only.
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-providers.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-process.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/class-smart-tags.php';
@@ -317,7 +322,7 @@ if ( class_exists( 'WPForms' ) ) {
 			require_once WPFORMS_PLUGIN_DIR . 'includes/emails/class-emails.php';
 			require_once WPFORMS_PLUGIN_DIR . 'includes/integrations.php';
 
-			// Admin/Dashboard only includes.
+			// Admin/Dashboard only includes, also in ajax.
 			if ( is_admin() ) {
 				require_once WPFORMS_PLUGIN_DIR . 'includes/admin/admin.php';
 				require_once WPFORMS_PLUGIN_DIR . 'includes/admin/class-notices.php';
@@ -334,7 +339,34 @@ if ( class_exists( 'WPForms' ) ) {
 				require_once WPFORMS_PLUGIN_DIR . 'includes/admin/ajax-actions.php';
 				require_once WPFORMS_PLUGIN_DIR . 'includes/admin/class-am-notification.php';
 				require_once WPFORMS_PLUGIN_DIR . 'includes/admin/class-am-deactivation-survey.php';
+				require_once WPFORMS_PLUGIN_DIR . 'includes/admin/class-am-dashboard-widget-extend-feed.php';
 			}
+		}
+
+		/**
+		 * Including the new files with PHP 5.3 style.
+		 *
+		 * @since 1.4.7
+		 */
+		private function includes_magic() {
+
+			// We require PHP 5.3 for that to work.
+			if ( version_compare( phpversion(), '5.3', '<' ) ) {
+				return;
+			}
+
+			// Autoloader is put into its own file to save space here.
+			require_once WPFORMS_PLUGIN_DIR . 'autoloader.php';
+
+			/*
+			 * Properly init the providers loader, that will handle all the related logic and further loading.
+			 */
+			add_action( 'wpforms_loaded', array( '\WPForms\Providers\Loader', 'get_instance' ) );
+
+			/*
+			 * Properly init the integrations loader, that will handle all the related logic and further loading.
+			 */
+			add_action( 'wpforms_loaded', array( '\WPForms\Integrations\Loader', 'get_instance' ) );
 		}
 
 		/**
@@ -345,12 +377,12 @@ if ( class_exists( 'WPForms' ) ) {
 		public function objects() {
 
 			// Global objects.
-			$this->form       = new WPForms_Form_Handler;
-			$this->frontend   = new WPForms_Frontend;
-			$this->process    = new WPForms_Process;
-			$this->smart_tags = new WPForms_Smart_Tags;
-			$this->logs       = new WPForms_Logging;
-			$this->preview    = new WPForms_Preview;
+			$this->form       = new WPForms_Form_Handler();
+			$this->frontend   = new WPForms_Frontend();
+			$this->process    = new WPForms_Process();
+			$this->smart_tags = new WPForms_Smart_Tags();
+			$this->logs       = new WPForms_Logging();
+			$this->preview    = new WPForms_Preview();
 
 			if ( is_admin() ) {
 				if ( ! wpforms_setting( 'hide-announcements', false ) ) {
@@ -371,12 +403,12 @@ if ( class_exists( 'WPForms' ) ) {
 	 * The function which returns the one WPForms instance.
 	 *
 	 * @since 1.0.0
-	 * @return object
+	 *
+	 * @return WPForms
 	 */
 	function wpforms() {
 
 		return WPForms::instance();
 	}
 	wpforms();
-
-} // End if().
+}

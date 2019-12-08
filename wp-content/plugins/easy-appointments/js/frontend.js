@@ -39,12 +39,14 @@
             jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ea_settings.datepicker] );
 
             var firstDay = ea_settings.start_of_week;
+            var minDate = (ea_settings.min_date === null) ? 0 : ea_settings.min_date;
 
             // datePicker
             this.$element.find('.date').datepicker({
                 onSelect: jQuery.proxy(plugin.dateChange, plugin),
                 dateFormat: 'yy-mm-dd',
-                minDate: 0,
+                minDate: minDate,
+                maxDate: ea_settings.max_date,
                 firstDay: firstDay,
                 defaultDate: ea_settings.default_date
             });
@@ -56,8 +58,13 @@
             this.$element.find('.time').on('click', '.time-value', function (event) {
                 event.preventDefault();
 
-                jQuery(this).parent().children().removeClass('selected-time');
-                jQuery(this).addClass('selected-time');
+                var result = plugin.selectTimes(jQuery(this));
+
+                // check if we can select that field
+                if (!result) {
+                    alert(ea_settings['trans.slot-not-selectable']);
+                    return;
+                }
 
                 if (ea_settings['pre.reservation'] === '1') {
                     plugin.appSelected.apply(plugin);
@@ -113,6 +120,51 @@
 
             this.$element.find('.ea-cancel').on('click', jQuery.proxy(plugin.cancelApp, plugin));
         },
+
+        selectTimes: function ($element) {
+            var plugin = this;
+
+            var serviceData = plugin.$element.find('[name="service"] > option:selected').data();
+            var duration = serviceData.duration;
+            var slot_step = serviceData.slot_step;
+
+            var takeSlots = parseInt(duration) / parseInt(slot_step);
+            var $nextSlots = $element.nextAll();
+
+            var forSelection = [];
+            forSelection.push($element);
+
+            if (($nextSlots.length + 1) < takeSlots) {
+                return false;
+            }
+
+            $element.parent().children().removeClass('selected-time');
+
+            jQuery.each($nextSlots, function (index, elem) {
+                var $elem = jQuery(elem);
+
+                if (index + 2 > takeSlots) {
+                    return false;
+                }
+
+                if ($elem.hasClass('time-disabled')) {
+                    return false;
+                }
+
+                forSelection.push($elem);
+            });
+
+            if (forSelection.length < takeSlots) {
+                return false;
+            }
+
+            jQuery.each(forSelection, function (index, elem) {
+                elem.addClass('selected-time');
+            });
+
+            return true;
+        },
+
         settingsOk: function () {
             var selectOptions = this.$element.find('select').not('.custom-field');
             var errors = jQuery('<div style="border: 1px solid gray; padding: 20px;">');
@@ -267,6 +319,11 @@
                         $option.data('price', element.price);
                     }
 
+                    if ('slot_step' in element) {
+                        $option.data('slot_step', element.slot_step);
+                        $option.data('duration', element.duration);
+                    }
+
                     next_element.append($option);
                 });
 
@@ -409,6 +466,7 @@
                 service: this.$element.find('[name="service"]').val(),
                 worker: this.$element.find('[name="worker"]').val(),
                 date: this.$element.find('.date').datepicker().val(),
+                end_date: this.$element.find('.date').datepicker().val(),
                 start: this.$element.find('.selected-time').data('val'),
                 check: ea_settings['check'],
                 action: 'ea_res_appointment'
@@ -533,6 +591,7 @@
                 service: this.$element.find('[name="service"]').val(),
                 worker: this.$element.find('[name="worker"]').val(),
                 date: this.$element.find('.date').datepicker().val(),
+                end_date: this.$element.find('.date').datepicker().val(),
                 start: this.$element.find('.selected-time').data('val'),
                 check: ea_settings['check'],
                 action: 'ea_res_appointment'

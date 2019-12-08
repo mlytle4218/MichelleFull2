@@ -59,7 +59,18 @@ class EAOptions
             'pre.reservation'               => '0',
             'default.status'                => 'pending',
             'send.worker.email'             => '0',
-            'currency.before'               => '0'
+            'currency.before'               => '0',
+            'nonce.off'                     => '0',
+            'gdpr.on'                       => '0',
+            'gdpr.label'                    => 'By using this form you agree with the storage and handling of your data by this website.',
+            'gdpr.link'                     => '',
+            'gdpr.message'                  => 'You need to accept the privacy checkbox',
+            'sort.workers-by'               => 'id',
+            'sort.services-by'              => 'id',
+            'sort.locations-by'             => 'id',
+            'order.workers-by'              => 'DESC',
+            'order.services-by'             => 'DESC',
+            'order.locations-by'            => 'DESC'
         );
     }
 
